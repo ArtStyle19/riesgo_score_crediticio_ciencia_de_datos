@@ -374,12 +374,12 @@ content %}
 
   <!-- Data Table -->
   <div id="tableSection" class="hidden">
-    <div class="glass-card-strong overflow-hidden">
+    <div class="glass-card-strong overflow-hidden rounded-2xl">
       <div class="px-6 py-4 border-b border-white/30 bg-white/40">
         <div
-          class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+          class="flex flex-col sm:flex-row sm:items-center sm:justify-between"
         >
-          <div>
+          <div class="min-h-full">
             <h3 class="text-lg font-semibold text-slate-800">
               Detalle de Clientes
             </h3>
@@ -387,33 +387,20 @@ content %}
               Haga clic en un registro para ver informacion detallada
             </p>
           </div>
-          <div class="flex items-center gap-3">
-            <div class="relative">
-              <input
-                type="text"
-                id="searchInput"
-                placeholder="Buscar cliente..."
-                class="pl-10 pr-4 py-2 rounded-xl text-sm w-64"
-                oninput="filterTable()"
-              />
-              <!-- Heroicon: magnifying-glass -->
-              <svg
-                class="h-5 w-5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
-                ></path>
-              </svg>
-            </div>
+          <div class="flex items-center max-w-full gap-3">
+    <!-- Búsqueda -->
+    <div class="relative">
+      <label for="searchInput" class="sr-only w-12 h-24">Buscar cliente</label>
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="Buscar cliente..."
+        oninput="filterTable()"
+      />
+    </div>
             <select
               id="riskFilter"
-              class="rounded-xl text-sm"
+              class="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 w-48"
               onchange="filterTable()"
             >
               <option value="">Todos los niveles</option>
@@ -423,7 +410,7 @@ content %}
             </select>
             <select
               id="decisionFilter"
-              class="rounded-xl text-sm"
+              class="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
               onchange="filterTable()"
             >
               <option value="">Todas las decisiones</option>

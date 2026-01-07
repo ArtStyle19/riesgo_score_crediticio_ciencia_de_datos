@@ -74,9 +74,9 @@
         font-family: "Inter", system-ui, sans-serif;
         background: linear-gradient(
           135deg,
-          #667eea 0%,
-          #764ba2 50%,
-          #6b8dd6 100%
+          #f5f5f5 0%,
+          #f1f1f1 50%,
+          #ebeaeae0 100%
         );
         background-attachment: fixed;
         min-height: 100vh;
@@ -88,7 +88,7 @@
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
         border: 1px solid rgba(255, 255, 255, 0.25);
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+        box-shadow: 0 8px 32px 0 rgba(196, 196, 196, 0.15);
       }
 
       .glass-light {
@@ -117,8 +117,8 @@
 
       /* Glass Cards for Dashboard */
       .glass-card {
-        background: rgba(255, 255, 255, 0.6);
-        backdrop-filter: blur(16px);
+        background: rgb(255, 255, 255);
+        backdrop-filter: blur(0px);
         -webkit-backdrop-filter: blur(16px);
         border: 1px solid rgba(255, 255, 255, 0.3);
         border-radius: 1rem;
@@ -137,8 +137,6 @@
         background: rgba(255, 255, 255, 0.75);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.35);
-        border-radius: 1rem;
         box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
         transition: all 0.3s ease;
       }
@@ -167,7 +165,8 @@
       select,
       textarea {
         display: block;
-        width: 100%;
+        width: auto;
+        height: 3rem;
         padding: 0.75rem 1rem;
         font-size: 0.875rem;
         line-height: 1.5;
@@ -567,7 +566,7 @@
       .blob-2 {
         width: 300px;
         height: 300px;
-        background: rgba(139, 92, 246, 0.4);
+        background: rgba(246, 92, 92, 0.4);
         bottom: 100px;
         left: 200px;
       }
@@ -584,9 +583,6 @@
   </head>
   <body class="h-full">
     <!-- Decorative Background Blobs -->
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
-    <div class="blob blob-3"></div>
 
     <div class="min-h-full">
       <!-- Sidebar with Glass Effect -->
@@ -828,7 +824,7 @@
       <div class="lg:pl-64">
         <!-- Top Bar with Glass Effect -->
         <header
-          class="sticky top-0 z-40 flex h-16 items-center gap-4 px-4 sm:px-6 lg:px-8 glass border-b border-white/20"
+          class="sticky top-0 z-40 flex h-16 items-center gap-4 px-4 sm:px-6 lg:px-8 glass border-b border-white/0"
         >
           <div class="flex flex-1 items-center justify-between">
             <h1 class="text-lg font-semibold text-slate-800">

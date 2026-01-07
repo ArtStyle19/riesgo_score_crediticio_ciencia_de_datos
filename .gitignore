@@ -1,0 +1,79 @@
+# =====================
+# Sistema operativo
+# =====================
+.DS_Store
+Thumbs.db
+
+# =====================
+# Entornos virtuales
+# =====================
+env/
+venv/
+.env/
+.env*/
+__pycache__/
+*.pyc
+*.pyo
+
+# =====================
+# Python
+# =====================
+*.log
+*.sqlite3
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# =====================
+# Node / Frontend
+# =====================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# =====================
+# Build / Dist
+# =====================
+dist/
+build/
+*.egg-info/
+
+# =====================
+# IDEs y editores
+# =====================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# =====================
+# Archivos de datos
+# =====================
+*.csv
+*.xlsx
+*.json
+
+# =====================
+# Imágenes / resultados
+# =====================
+*.png
+*.jpg
+*.jpeg
+*.svg
+
+# =====================
+# Mapas / OSM / GIS
+# =====================
+*.osm
+*.geojson
+*.shp
+*.dbf
+*.shx
+
+# =====================
+# Otros
+# =====================
+*.tmp
+*.bak
