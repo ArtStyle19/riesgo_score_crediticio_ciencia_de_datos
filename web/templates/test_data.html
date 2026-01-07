@@ -1,0 +1,461 @@
+{% extends "base.html" %}
+{% set active_page = 'test_data' %}
+
+{% block title %}Datos de Prueba - Sistema de Riesgo Crediticio{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">Evaluacion de Datos de Prueba</h1>
+            <p class="mt-1 text-sm text-gray-500">
+                Analisis de riesgo de prestamos del conjunto de prueba (sin etiquetas conocidas)
+            </p>
+        </div>
+        <div class="flex gap-3">
+            <button onclick="loadTestData()" id="btnLoad" 
+                class="inline-flex items-center gap-2 rounded-lg bg-primary-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                </svg>
+                Cargar Datos de Prueba
+            </button>
+            <button onclick="exportPredictions()" id="btnExport" disabled
+                class="inline-flex items-center gap-2 rounded-lg bg-gray-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                Exportar CSV
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loadingState" class="hidden">
+        <div class="flex flex-col items-center justify-center py-12 bg-white rounded-xl shadow-sm border border-gray-200">
+            <div class="loader mb-4" style="width: 48px; height: 48px; border-width: 4px;"></div>
+            <p class="text-gray-600 font-medium">Cargando y evaluando datos de prueba...</p>
+            <p class="text-gray-400 text-sm mt-1">Esto puede tardar unos segundos</p>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div id="summarySection" class="hidden">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <!-- Total Records -->
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+                <div class="flex items-center gap-4">
+                    <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100">
+                        <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Total Registros</p>
+                        <p class="text-2xl font-bold text-gray-900" id="totalRecords">-</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Predicted Payments -->
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+                <div class="flex items-center gap-4">
+                    <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
+                        <svg class="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Prediccion: Pagara</p>
+                        <p class="text-2xl font-bold text-green-600" id="predictedPayments">-</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Predicted Defaults -->
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+                <div class="flex items-center gap-4">
+                    <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-red-100">
+                        <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Prediccion: Default</p>
+                        <p class="text-2xl font-bold text-red-600" id="predictedDefaults">-</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Default Rate -->
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+                <div class="flex items-center gap-4">
+                    <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-yellow-100">
+                        <svg class="h-6 w-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Tasa de Default</p>
+                        <p class="text-2xl font-bold text-yellow-600" id="defaultRate">-</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div id="chartsSection" class="hidden">
+        <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <!-- Risk Distribution Chart -->
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Distribucion por Nivel de Riesgo</h3>
+                <div class="h-64">
+                    <canvas id="riskDistChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Probability Distribution Chart -->
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Distribucion de Probabilidad de Default</h3>
+                <div class="h-64">
+                    <canvas id="probDistChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Table -->
+    <div id="tableSection" class="hidden">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-gray-900">Detalle de Predicciones</h3>
+                <div class="flex items-center gap-4">
+                    <input type="text" id="searchInput" placeholder="Buscar..." 
+                        class="rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm"
+                        oninput="filterTable()">
+                    <select id="riskFilter" class="rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm" onchange="filterTable()">
+                        <option value="">Todos los niveles</option>
+                        <option value="BAJO">Riesgo Bajo</option>
+                        <option value="MEDIO">Riesgo Medio</option>
+                        <option value="ALTO">Riesgo Alto</option>
+                    </select>
+                </div>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
+                            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Prediccion</th>
+                            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nivel Riesgo</th>
+                            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Prob. Default</th>
+                            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Confianza</th>
+                            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Monto</th>
+                            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tasa</th>
+                            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Grado</th>
+                            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ingreso</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataTableBody" class="bg-white divide-y divide-gray-200">
+                        <!-- Rows will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+            <!-- Pagination -->
+            <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+                <p class="text-sm text-gray-500">
+                    Mostrando <span id="showingFrom">0</span> a <span id="showingTo">0</span> de <span id="showingTotal">0</span> registros
+                </p>
+                <div class="flex gap-2">
+                    <button onclick="changePage(-1)" id="btnPrev" disabled
+                        class="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                        Anterior
+                    </button>
+                    <span class="px-3 py-1.5 text-sm font-medium text-gray-700">Pagina <span id="currentPage">1</span></span>
+                    <button onclick="changePage(1)" id="btnNext"
+                        class="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                        Siguiente
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let allData = [];
+let allPredictions = [];
+let filteredPredictions = [];
+let currentPage = 1;
+const pageSize = 20;
+let riskChart = null;
+let probChart = null;
+
+async function loadTestData() {
+    const btnLoad = document.getElementById('btnLoad');
+    const loadingState = document.getElementById('loadingState');
+    const summarySection = document.getElementById('summarySection');
+    const chartsSection = document.getElementById('chartsSection');
+    const tableSection = document.getElementById('tableSection');
+    
+    // Show loading
+    btnLoad.disabled = true;
+    btnLoad.innerHTML = '<div class="loader" style="width:20px;height:20px;border-width:2px;"></div> Cargando...';
+    loadingState.classList.remove('hidden');
+    summarySection.classList.add('hidden');
+    chartsSection.classList.add('hidden');
+    tableSection.classList.add('hidden');
+    
+    try {
+        const response = await fetch('/api/load-test-data');
+        const result = await response.json();
+        
+        if (result.success) {
+            allData = result.data;
+            allPredictions = result.predictions;
+            filteredPredictions = [...allPredictions];
+            
+            // Update summary
+            updateSummary(result.summary);
+            
+            // Create charts
+            createCharts(result.summary);
+            
+            // Populate table
+            currentPage = 1;
+            updateTable();
+            
+            // Show sections
+            summarySection.classList.remove('hidden');
+            chartsSection.classList.remove('hidden');
+            tableSection.classList.remove('hidden');
+            
+            // Enable export
+            document.getElementById('btnExport').disabled = false;
+            
+            if (result.from_cache) {
+                showToast('Datos cargados desde cache', 'info');
+            } else {
+                showToast('Datos evaluados exitosamente', 'success');
+            }
+        } else {
+            showToast('Error: ' + result.error, 'error');
+        }
+    } catch (error) {
+        showToast('Error de conexion: ' + error.message, 'error');
+    } finally {
+        loadingState.classList.add('hidden');
+        btnLoad.disabled = false;
+        btnLoad.innerHTML = `<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+        </svg> Recargar Datos`;
+    }
+}
+
+function updateSummary(summary) {
+    document.getElementById('totalRecords').textContent = summary.total_records.toLocaleString();
+    document.getElementById('predictedPayments').textContent = summary.predicted_payments.toLocaleString();
+    document.getElementById('predictedDefaults').textContent = summary.predicted_defaults.toLocaleString();
+    document.getElementById('defaultRate').textContent = summary.default_rate.toFixed(1) + '%';
+}
+
+function createCharts(summary) {
+    // Destroy existing charts
+    if (riskChart) riskChart.destroy();
+    if (probChart) probChart.destroy();
+    
+    // Risk Distribution Chart
+    const riskCtx = document.getElementById('riskDistChart').getContext('2d');
+    const riskDist = summary.risk_distribution || {};
+    riskChart = new Chart(riskCtx, {
+        type: 'doughnut',
+        data: {
+            labels: Object.keys(riskDist),
+            datasets: [{
+                data: Object.values(riskDist),
+                backgroundColor: [
+                    '#22c55e', // BAJO - green
+                    '#f59e0b', // MEDIO - yellow
+                    '#ef4444'  // ALTO - red
+                ],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+    
+    // Probability Distribution Chart
+    const probCtx = document.getElementById('probDistChart').getContext('2d');
+    const probs = allPredictions.map(p => p.probability_default);
+    const bins = [0, 0, 0, 0, 0]; // 0-20, 20-40, 40-60, 60-80, 80-100
+    probs.forEach(p => {
+        if (p < 0.2) bins[0]++;
+        else if (p < 0.4) bins[1]++;
+        else if (p < 0.6) bins[2]++;
+        else if (p < 0.8) bins[3]++;
+        else bins[4]++;
+    });
+    
+    probChart = new Chart(probCtx, {
+        type: 'bar',
+        data: {
+            labels: ['0-20%', '20-40%', '40-60%', '60-80%', '80-100%'],
+            datasets: [{
+                label: 'Cantidad de Prestamos',
+                data: bins,
+                backgroundColor: ['#22c55e', '#84cc16', '#f59e0b', '#f97316', '#ef4444'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+function updateTable() {
+    const tbody = document.getElementById('dataTableBody');
+    const start = (currentPage - 1) * pageSize;
+    const end = Math.min(start + pageSize, filteredPredictions.length);
+    const pageData = filteredPredictions.slice(start, end);
+    
+    tbody.innerHTML = pageData.map((pred, idx) => {
+        const data = allData.find(d => true) || {}; // Get corresponding data
+        const dataItem = allData[allPredictions.indexOf(pred)] || {};
+        
+        const riskColors = {
+            'BAJO': 'bg-green-100 text-green-800',
+            'MEDIO': 'bg-yellow-100 text-yellow-800',
+            'ALTO': 'bg-red-100 text-red-800'
+        };
+        
+        const predColors = {
+            0: 'text-green-600',
+            1: 'text-red-600'
+        };
+        
+        return `
+            <tr class="hover:bg-gray-50">
+                <td class="px-4 py-3 text-sm text-gray-500">${start + idx + 1}</td>
+                <td class="px-4 py-3 text-sm font-medium ${predColors[pred.prediction]}">
+                    ${pred.prediction === 0 ? 'Pagara' : 'Default'}
+                </td>
+                <td class="px-4 py-3">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${riskColors[pred.risk_level]}">
+                        ${pred.risk_level}
+                    </span>
+                </td>
+                <td class="px-4 py-3 text-sm text-gray-900">${(pred.probability_default * 100).toFixed(1)}%</td>
+                <td class="px-4 py-3 text-sm text-gray-500">${(pred.confidence * 100).toFixed(1)}%</td>
+                <td class="px-4 py-3 text-sm text-gray-900">$${(dataItem.loan_amnt || 0).toLocaleString()}</td>
+                <td class="px-4 py-3 text-sm text-gray-500">${(dataItem.loan_int_rate || 0).toFixed(1)}%</td>
+                <td class="px-4 py-3 text-sm text-gray-500">${dataItem.loan_grade || '-'}</td>
+                <td class="px-4 py-3 text-sm text-gray-900">$${(dataItem.person_income || 0).toLocaleString()}</td>
+            </tr>
+        `;
+    }).join('');
+    
+    // Update pagination info
+    document.getElementById('showingFrom').textContent = filteredPredictions.length > 0 ? start + 1 : 0;
+    document.getElementById('showingTo').textContent = end;
+    document.getElementById('showingTotal').textContent = filteredPredictions.length;
+    document.getElementById('currentPage').textContent = currentPage;
+    
+    // Update buttons
+    document.getElementById('btnPrev').disabled = currentPage === 1;
+    document.getElementById('btnNext').disabled = end >= filteredPredictions.length;
+}
+
+function filterTable() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const riskFilter = document.getElementById('riskFilter').value;
+    
+    filteredPredictions = allPredictions.filter((pred, idx) => {
+        const data = allData[idx] || {};
+        
+        // Risk filter
+        if (riskFilter && pred.risk_level !== riskFilter) return false;
+        
+        // Search filter
+        if (searchTerm) {
+            const searchFields = [
+                pred.risk_level,
+                pred.prediction === 0 ? 'pagara' : 'default',
+                data.loan_grade,
+                data.loan_intent
+            ].join(' ').toLowerCase();
+            
+            if (!searchFields.includes(searchTerm)) return false;
+        }
+        
+        return true;
+    });
+    
+    currentPage = 1;
+    updateTable();
+}
+
+function changePage(delta) {
+    const maxPage = Math.ceil(filteredPredictions.length / pageSize);
+    currentPage = Math.max(1, Math.min(currentPage + delta, maxPage));
+    updateTable();
+}
+
+function exportPredictions() {
+    window.location.href = '/api/export-predictions';
+    showToast('Descargando archivo CSV...', 'info');
+}
+
+function showToast(message, type = 'info') {
+    const colors = {
+        success: 'bg-green-500',
+        error: 'bg-red-500',
+        info: 'bg-blue-500',
+        warning: 'bg-yellow-500'
+    };
+    
+    const toast = document.createElement('div');
+    toast.className = `toast fixed top-4 right-4 z-50 px-6 py-3 rounded-lg text-white shadow-lg ${colors[type]}`;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.remove();
+    }, 3000);
+}
+
+// Check if data is already loaded on page load
+document.addEventListener('DOMContentLoaded', async function() {
+    try {
+        const response = await fetch('/api/dashboard-metrics');
+        const result = await response.json();
+        if (result.success && result.metrics.test_data_loaded) {
+            loadTestData();
+        }
+    } catch (e) {
+        console.log('No cached data available');
+    }
+});
+</script>
+{% endblock %}

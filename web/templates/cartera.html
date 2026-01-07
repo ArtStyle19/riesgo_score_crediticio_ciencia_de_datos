@@ -1,0 +1,1618 @@
+{% extends "base.html" %} {% set active_page = 'cartera' %} {% block title
+%}Cartera de Prestamos - Sistema de Analisis Crediticio{% endblock %} {% block
+content %}
+<div class="space-y-6">
+  <!-- Header -->
+  <div
+    class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+  >
+    <div>
+      <h1 class="text-2xl font-bold text-slate-800">Cartera de Prestamos</h1>
+      <p class="mt-1 text-sm text-slate-500">
+        Analisis predictivo de todas las evaluaciones realizadas
+      </p>
+    </div>
+    <div class="flex gap-3 flex-wrap">
+      <button
+        onclick="loadHistoryData()"
+        id="btnLoadHistory"
+        class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-primary-600 to-primary-700 px-4 py-2.5 text-sm font-medium text-white shadow-lg shadow-primary-500/25 hover:shadow-xl hover:shadow-primary-500/30 hover:from-primary-500 hover:to-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-all duration-300"
+      >
+        <!-- Heroicon: document-chart-bar -->
+        <svg
+          class="h-5 w-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25M9 16.5v.75m3-3v3M15 12v5.25m-4.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
+          ></path>
+        </svg>
+        Cargar Historial
+      </button>
+      <button
+        onclick="loadTestData()"
+        id="btnLoad"
+        class="inline-flex items-center gap-2 rounded-xl glass-card px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-white/80 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-all duration-300"
+      >
+        <!-- Heroicon: beaker -->
+        <svg
+          class="h-5 w-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5"
+          ></path>
+        </svg>
+        Dataset Prueba
+      </button>
+      <button
+        onclick="exportPredictions()"
+        id="btnExport"
+        disabled
+        class="inline-flex items-center gap-2 rounded-xl glass-card px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-white/80 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <!-- Heroicon: arrow-down-tray -->
+        <svg
+          class="h-5 w-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"
+          ></path>
+        </svg>
+        Exportar
+      </button>
+    </div>
+  </div>
+
+  <!-- Info Banner -->
+  <div id="infoBanner" class="glass-card p-4 border border-primary-200/30">
+    <div class="flex items-start gap-3">
+      <!-- Heroicon: information-circle -->
+      <svg
+        class="h-5 w-5 text-primary-600 mt-0.5 flex-shrink-0"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
+        ></path>
+      </svg>
+      <div>
+        <h4 class="text-sm font-medium text-primary-800">
+          Fuentes de datos disponibles
+        </h4>
+        <p class="mt-1 text-sm text-slate-600">
+          <strong>Cargar Historial:</strong> Muestra todas las evaluaciones
+          realizadas (individuales, por lote y precargadas) guardadas en el
+          sistema.
+          <br />
+          <strong>Dataset Prueba:</strong> Carga 500 registros del dataset de
+          prueba para demostracion del modelo.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div id="loadingState" class="hidden">
+    <div
+      class="flex flex-col items-center justify-center py-16 glass-card-strong"
+    >
+      <div class="relative">
+        <div class="h-16 w-16 rounded-full border-4 border-slate-200/60"></div>
+        <div
+          class="absolute top-0 h-16 w-16 rounded-full border-4 border-primary-600 border-t-transparent animate-spin"
+        ></div>
+      </div>
+      <p class="text-slate-700 font-medium mt-6">
+        Analizando cartera de prestamos...
+      </p>
+      <p class="text-slate-400 text-sm mt-1">
+        El modelo esta evaluando cada prestamo individualmente
+      </p>
+    </div>
+  </div>
+
+  <!-- Summary Cards -->
+  <div id="summarySection" class="hidden">
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <!-- Total Records -->
+      <div class="glass-card p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-slate-500">
+              Prestamos Analizados
+            </p>
+            <p class="text-3xl font-bold text-slate-800 mt-1" id="totalRecords">
+              -
+            </p>
+          </div>
+          <div
+            class="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-blue-400/20 to-blue-600/20 backdrop-blur-sm"
+          >
+            <!-- Heroicon: document-text -->
+            <svg
+              class="h-6 w-6 text-blue-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
+              ></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Predicted Payments -->
+      <div class="glass-card p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-slate-500">
+              Pagaran (Bajo Riesgo)
+            </p>
+            <p
+              class="text-3xl font-bold text-emerald-600 mt-1"
+              id="predictedPayments"
+            >
+              -
+            </p>
+            <p class="text-xs text-slate-400 mt-1" id="paymentPercent">-</p>
+          </div>
+          <div
+            class="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400/20 to-emerald-600/20 backdrop-blur-sm"
+          >
+            <!-- Heroicon: check-circle -->
+            <svg
+              class="h-6 w-6 text-emerald-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              ></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Predicted Defaults -->
+      <div class="glass-card p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-slate-500">
+              Posible Incumplimiento
+            </p>
+            <p
+              class="text-3xl font-bold text-red-600 mt-1"
+              id="predictedDefaults"
+            >
+              -
+            </p>
+            <p class="text-xs text-slate-400 mt-1" id="defaultPercent">-</p>
+          </div>
+          <div
+            class="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-red-400/20 to-red-600/20 backdrop-blur-sm"
+          >
+            <!-- Heroicon: exclamation-triangle -->
+            <svg
+              class="h-6 w-6 text-red-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
+              ></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Average Probability -->
+      <div class="glass-card p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-slate-500">
+              Prob. Promedio Default
+            </p>
+            <p
+              class="text-3xl font-bold text-amber-600 mt-1"
+              id="avgProbability"
+            >
+              -
+            </p>
+            <p class="text-xs text-slate-400 mt-1">Promedio de la cartera</p>
+          </div>
+          <div
+            class="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400/20 to-amber-600/20 backdrop-blur-sm"
+          >
+            <!-- Heroicon: chart-bar -->
+            <svg
+              class="h-6 w-6 text-amber-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"
+              ></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts Section -->
+  <div id="chartsSection" class="hidden">
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+      <!-- Risk Distribution Chart -->
+      <div class="glass-card p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-lg font-semibold text-slate-800">
+              Distribucion por Nivel de Riesgo
+            </h3>
+            <p class="text-sm text-slate-500">
+              Clasificacion de prestamos segun probabilidad de incumplimiento
+            </p>
+          </div>
+          <!-- Heroicon: chart-pie -->
+          <svg
+            class="h-5 w-5 text-slate-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z"
+            ></path>
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z"
+            ></path>
+          </svg>
+        </div>
+        <div class="h-72">
+          <canvas id="riskDistChart"></canvas>
+        </div>
+        <div
+          class="mt-4 grid grid-cols-3 gap-4 text-center border-t border-white/30 pt-4"
+        >
+          <div>
+            <p class="text-xs text-slate-500 uppercase tracking-wide">Bajo</p>
+            <p class="text-lg font-semibold text-emerald-600" id="riskLowCount">
+              -
+            </p>
+          </div>
+          <div>
+            <p class="text-xs text-slate-500 uppercase tracking-wide">Medio</p>
+            <p class="text-lg font-semibold text-amber-600" id="riskMedCount">
+              -
+            </p>
+          </div>
+          <div>
+            <p class="text-xs text-slate-500 uppercase tracking-wide">Alto</p>
+            <p class="text-lg font-semibold text-red-600" id="riskHighCount">
+              -
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Probability Distribution Chart -->
+      <div class="glass-card p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-lg font-semibold text-slate-800">
+              Histograma de Probabilidades
+            </h3>
+            <p class="text-sm text-slate-500">
+              Distribucion de probabilidades de incumplimiento
+            </p>
+          </div>
+          <!-- Heroicon: chart-bar-square -->
+          <svg
+            class="h-5 w-5 text-slate-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9v9M6 20.25h12A2.25 2.25 0 0020.25 18V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25z"
+            ></path>
+          </svg>
+        </div>
+        <div class="h-72">
+          <canvas id="probDistChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Data Table -->
+  <div id="tableSection" class="hidden">
+    <div class="glass-card-strong overflow-hidden">
+      <div class="px-6 py-4 border-b border-white/30 bg-white/40">
+        <div
+          class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+        >
+          <div>
+            <h3 class="text-lg font-semibold text-slate-800">
+              Detalle de Clientes
+            </h3>
+            <p class="text-sm text-slate-500">
+              Haga clic en un registro para ver informacion detallada
+            </p>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="relative">
+              <input
+                type="text"
+                id="searchInput"
+                placeholder="Buscar cliente..."
+                class="pl-10 pr-4 py-2 rounded-xl text-sm w-64"
+                oninput="filterTable()"
+              />
+              <!-- Heroicon: magnifying-glass -->
+              <svg
+                class="h-5 w-5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+                ></path>
+              </svg>
+            </div>
+            <select
+              id="riskFilter"
+              class="rounded-xl text-sm"
+              onchange="filterTable()"
+            >
+              <option value="">Todos los niveles</option>
+              <option value="BAJO">Riesgo Bajo</option>
+              <option value="MEDIO">Riesgo Medio</option>
+              <option value="ALTO">Riesgo Alto</option>
+            </select>
+            <select
+              id="decisionFilter"
+              class="rounded-xl text-sm"
+              onchange="filterTable()"
+            >
+              <option value="">Todas las decisiones</option>
+              <option value="APROBADO">Aprobado</option>
+              <option value="APROBADO CON CONDICIONES">
+                Aprobado con Condiciones
+              </option>
+              <option value="RECHAZADO">Rechazado</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-white/30">
+          <thead class="bg-white/30">
+            <tr>
+              <th
+                scope="col"
+                class="px-3 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider"
+              >
+                Cliente
+              </th>
+              <th
+                scope="col"
+                class="px-3 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider"
+              >
+                Ingreso
+              </th>
+              <th
+                scope="col"
+                class="px-3 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider"
+              >
+                Monto
+              </th>
+              <th
+                scope="col"
+                class="px-3 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider"
+              >
+                Score
+              </th>
+              <th
+                scope="col"
+                class="px-3 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
+              >
+                Riesgo
+              </th>
+              <th
+                scope="col"
+                class="px-3 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
+              >
+                Prob. Default
+              </th>
+              <th
+                scope="col"
+                class="px-3 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
+              >
+                Decisión
+              </th>
+              <th
+                scope="col"
+                class="px-3 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
+              >
+                Monto Aprobado
+              </th>
+              <th
+                scope="col"
+                class="px-3 py-3 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider"
+              >
+                Acciones
+              </th>
+            </tr>
+          </thead>
+          <tbody
+            id="dataTableBody"
+            class="bg-white/50 divide-y divide-white/30"
+          >
+            <!-- Rows will be inserted here -->
+          </tbody>
+        </table>
+      </div>
+      <!-- Pagination -->
+      <div
+        class="px-6 py-4 border-t border-white/30 flex items-center justify-between bg-white/40"
+      >
+        <p class="text-sm text-slate-600">
+          Mostrando <span class="font-medium" id="showingFrom">0</span> a
+          <span class="font-medium" id="showingTo">0</span> de
+          <span class="font-medium" id="showingTotal">0</span> registros
+        </p>
+        <div class="flex items-center gap-2">
+          <button
+            onclick="changePage(-1)"
+            id="btnPrev"
+            disabled
+            class="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-slate-700 glass-card hover:bg-white/80 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+          >
+            <!-- Heroicon: chevron-left -->
+            <svg
+              class="h-4 w-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M15.75 19.5L8.25 12l7.5-7.5"
+              ></path>
+            </svg>
+            Anterior
+          </button>
+          <span class="px-3 py-1.5 text-sm font-medium text-slate-600"
+            >Pagina <span id="currentPage">1</span> de
+            <span id="totalPages">1</span></span
+          >
+          <button
+            onclick="changePage(1)"
+            id="btnNext"
+            class="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-slate-700 glass-card hover:bg-white/80 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+          >
+            Siguiente
+            <!-- Heroicon: chevron-right -->
+            <svg
+              class="h-4 w-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M8.25 4.5l7.5 7.5-7.5 7.5"
+              ></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Detail Modal -->
+<div
+  id="detailModal"
+  class="fixed inset-0 z-50 hidden overflow-y-auto"
+  aria-labelledby="modal-title"
+  role="dialog"
+  aria-modal="true"
+>
+  <div
+    class="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0"
+  >
+    <!-- Background overlay -->
+    <div
+      class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"
+      onclick="closeModal()"
+    ></div>
+
+    <!-- Modal panel -->
+    <div
+      class="inline-block transform overflow-hidden rounded-2xl glass-card-strong text-left align-bottom shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:align-middle"
+    >
+      <!-- Header -->
+      <div class="bg-gradient-to-r from-primary-600 to-primary-700 px-6 py-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <!-- Heroicon: user-circle -->
+            <svg
+              class="h-8 w-8 text-white/80"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"
+              ></path>
+            </svg>
+            <div>
+              <h3 class="text-lg font-semibold text-white" id="modalClientName">
+                Nombre del Cliente
+              </h3>
+              <p class="text-sm text-white/70">
+                Analisis detallado del prestamo
+              </p>
+            </div>
+          </div>
+          <button
+            onclick="closeModal()"
+            class="text-white/80 hover:text-white transition-colors"
+          >
+            <!-- Heroicon: x-mark -->
+            <svg
+              class="h-6 w-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M6 18L18 6M6 6l12 12"
+              ></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="px-6 py-5">
+        <!-- Risk Badge -->
+        <div class="flex items-center justify-center mb-6">
+          <div
+            id="modalRiskBadge"
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold"
+          >
+            <!-- Content filled by JS -->
+          </div>
+        </div>
+
+        <!-- Probability Meters -->
+        <div class="grid grid-cols-2 gap-6 mb-6">
+          <div class="text-center">
+            <p class="text-sm text-gray-500 mb-2">Probabilidad de Pago</p>
+            <div class="relative h-3 bg-gray-200 rounded-full overflow-hidden">
+              <div
+                id="modalPaymentBar"
+                class="absolute left-0 top-0 h-full bg-green-500 transition-all duration-500"
+              ></div>
+            </div>
+            <p
+              class="text-2xl font-bold text-green-600 mt-2"
+              id="modalPaymentProb"
+            >
+              -
+            </p>
+          </div>
+          <div class="text-center">
+            <p class="text-sm text-gray-500 mb-2">
+              Probabilidad de Incumplimiento
+            </p>
+            <div class="relative h-3 bg-gray-200 rounded-full overflow-hidden">
+              <div
+                id="modalDefaultBar"
+                class="absolute left-0 top-0 h-full bg-red-500 transition-all duration-500"
+              ></div>
+            </div>
+            <p
+              class="text-2xl font-bold text-red-600 mt-2"
+              id="modalDefaultProb"
+            >
+              -
+            </p>
+          </div>
+        </div>
+
+        <!-- Client Info -->
+        <div class="border-t border-white/30 pt-5">
+          <h4
+            class="text-sm font-semibold text-slate-700 mb-3 flex items-center gap-2"
+          >
+            <!-- Heroicon: identification -->
+            <svg
+              class="h-4 w-4 text-slate-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z"
+              ></path>
+            </svg>
+            Informacion del Cliente
+          </h4>
+          <div class="grid grid-cols-2 gap-4">
+            <div class="glass-light rounded-xl p-3">
+              <p class="text-xs text-slate-500">Edad</p>
+              <p class="text-sm font-medium text-slate-800" id="modalAge">-</p>
+            </div>
+            <div class="glass-light rounded-xl p-3">
+              <p class="text-xs text-slate-500">Ingreso Anual</p>
+              <p class="text-sm font-medium text-slate-800" id="modalIncome">
+                -
+              </p>
+            </div>
+            <div class="glass-light rounded-xl p-3">
+              <p class="text-xs text-slate-500">Anos de Empleo</p>
+              <p class="text-sm font-medium text-slate-800" id="modalEmpLength">
+                -
+              </p>
+            </div>
+            <div class="glass-light rounded-xl p-3">
+              <p class="text-xs text-slate-500">Tipo de Vivienda</p>
+              <p
+                class="text-sm font-medium text-slate-800"
+                id="modalHomeOwnership"
+              >
+                -
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Loan Info -->
+        <div class="border-t border-white/30 pt-5 mt-5">
+          <h4
+            class="text-sm font-semibold text-slate-700 mb-3 flex items-center gap-2"
+          >
+            <!-- Heroicon: banknotes -->
+            <svg
+              class="h-4 w-4 text-slate-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z"
+              ></path>
+            </svg>
+            Informacion del Prestamo
+          </h4>
+          <div class="grid grid-cols-2 gap-4">
+            <div class="glass-light rounded-xl p-3">
+              <p class="text-xs text-slate-500">Monto del Prestamo</p>
+              <p
+                class="text-sm font-medium text-slate-800"
+                id="modalLoanAmount"
+              >
+                -
+              </p>
+            </div>
+            <div class="glass-light rounded-xl p-3">
+              <p class="text-xs text-slate-500">Tasa de Interes</p>
+              <p class="text-sm font-medium text-slate-800" id="modalIntRate">
+                -
+              </p>
+            </div>
+            <div class="glass-light rounded-xl p-3">
+              <p class="text-xs text-slate-500">Grado del Prestamo</p>
+              <p class="text-sm font-medium text-slate-800" id="modalGrade">
+                -
+              </p>
+            </div>
+            <div class="glass-light rounded-xl p-3">
+              <p class="text-xs text-slate-500">Proposito</p>
+              <p class="text-sm font-medium text-slate-800" id="modalIntent">
+                -
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Credit History -->
+        <div class="border-t border-white/30 pt-5 mt-5">
+          <h4
+            class="text-sm font-semibold text-slate-700 mb-3 flex items-center gap-2"
+          >
+            <!-- Heroicon: clock -->
+            <svg
+              class="h-4 w-4 text-slate-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
+              ></path>
+            </svg>
+            Historial Crediticio
+          </h4>
+          <div class="grid grid-cols-2 gap-4">
+            <div class="glass-light rounded-xl p-3">
+              <p class="text-xs text-slate-500">Anos de Historial</p>
+              <p class="text-sm font-medium text-slate-800" id="modalCredHist">
+                -
+              </p>
+            </div>
+            <div class="glass-light rounded-xl p-3">
+              <p class="text-xs text-slate-500">Incumplimiento Previo</p>
+              <p class="text-sm font-medium" id="modalDefaultHistory">-</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="bg-white/40 px-6 py-4 border-t border-white/30">
+        <div class="flex justify-end">
+          <button
+            onclick="closeModal()"
+            class="px-4 py-2 text-sm font-medium text-slate-700 glass-card hover:bg-white/80 transition-all duration-300"
+          >
+            Cerrar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Random names for realistic display
+  const NOMBRES = [
+    "Carlos Rodriguez",
+    "Maria Garcia",
+    "Juan Martinez",
+    "Ana Lopez",
+    "Pedro Sanchez",
+    "Laura Fernandez",
+    "Miguel Gonzalez",
+    "Sofia Ramirez",
+    "Diego Torres",
+    "Valentina Diaz",
+    "Andres Moreno",
+    "Camila Ruiz",
+    "Luis Vargas",
+    "Isabella Castro",
+    "Fernando Ortiz",
+    "Daniela Romero",
+    "Ricardo Herrera",
+    "Paula Mendoza",
+    "Alejandro Silva",
+    "Gabriela Flores",
+    "Jorge Jimenez",
+    "Natalia Reyes",
+    "Sebastian Medina",
+    "Mariana Aguilar",
+    "David Gutierrez",
+    "Andrea Ramos",
+    "Felipe Navarro",
+    "Carolina Cruz",
+    "Nicolas Rojas",
+    "Lucia Molina",
+  ];
+
+  const INTENT_LABELS = {
+    PERSONAL: "Personal",
+    EDUCATION: "Educacion",
+    MEDICAL: "Medico",
+    VENTURE: "Negocio",
+    HOMEIMPROVEMENT: "Mejora de Hogar",
+    DEBTCONSOLIDATION: "Consolidacion de Deuda",
+  };
+
+  const HOME_LABELS = {
+    RENT: "Alquiler",
+    OWN: "Propia",
+    MORTGAGE: "Hipoteca",
+    OTHER: "Otro",
+  };
+
+  let allData = [];
+  let allPredictions = [];
+  let filteredPredictions = [];
+  let currentPage = 1;
+  const pageSize = 15;
+  let riskChart = null;
+  let probChart = null;
+  let dataSource = "none"; // 'history' o 'test'
+
+  // Cargar historial automáticamente al iniciar
+  document.addEventListener("DOMContentLoaded", function () {
+    loadHistoryData();
+  });
+
+  function getRandomName(index) {
+    return NOMBRES[index % NOMBRES.length];
+  }
+
+  // Cargar datos desde historial (localStorage)
+  function loadHistoryData() {
+    const btnLoadHistory = document.getElementById("btnLoadHistory");
+    const loadingState = document.getElementById("loadingState");
+    const summarySection = document.getElementById("summarySection");
+    const chartsSection = document.getElementById("chartsSection");
+    const tableSection = document.getElementById("tableSection");
+    const infoBanner = document.getElementById("infoBanner");
+
+    // Show loading
+    btnLoadHistory.disabled = true;
+    btnLoadHistory.innerHTML = `<svg class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Cargando...`;
+    loadingState.classList.remove("hidden");
+    summarySection.classList.add("hidden");
+    chartsSection.classList.add("hidden");
+    tableSection.classList.add("hidden");
+    infoBanner.classList.add("hidden");
+
+    setTimeout(() => {
+      try {
+        const KEY = "credit_risk_evaluations";
+        const historyData = JSON.parse(localStorage.getItem(KEY) || "[]");
+
+        if (historyData.length === 0) {
+          showToast(
+            "No hay evaluaciones en el historial. Realice evaluaciones individuales o por lote primero.",
+            "warning"
+          );
+          infoBanner.classList.remove("hidden");
+          loadingState.classList.add("hidden");
+          btnLoadHistory.disabled = false;
+          btnLoadHistory.innerHTML = `<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25M9 16.5v.75m3-3v3M15 12v5.25m-4.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"></path></svg> Cargar Historial`;
+          return;
+        }
+
+        dataSource = "history";
+
+        // Convertir historial a formato compatible - capturar TODOS los campos
+        allData = historyData.map((h, idx) => ({
+          person_age: h.person_age || h.age || 0,
+          person_income: h.person_income || h.income || 0,
+          loan_amnt: h.loan_amnt || h.loan_amount || 0,
+          loan_intent: h.loan_intent || "PERSONAL",
+          person_home_ownership: h.person_home_ownership || "RENT",
+          loan_grade: h.loan_grade || "C",
+          loan_int_rate: h.loan_int_rate || h.suggested_rate || 10,
+          person_emp_length: h.person_emp_length || 5,
+          cb_person_cred_hist_length: h.cb_person_cred_hist_length || 5,
+          cb_person_default_on_file: h.cb_person_default_on_file || "N",
+          client_name: h.client_name || h.name,
+        }));
+
+        allPredictions = historyData.map((h, idx) => {
+          // Calcular credit_score si no existe
+          const probDefault = h.probability_default || 0.5;
+          const creditScore =
+            h.credit_score || Math.round(850 - probDefault * 550);
+
+          // Determinar score_category si no existe
+          let scoreCategory = h.score_category;
+          if (!scoreCategory) {
+            if (creditScore >= 740) scoreCategory = "Excelente";
+            else if (creditScore >= 670) scoreCategory = "Bueno";
+            else if (creditScore >= 580) scoreCategory = "Regular";
+            else scoreCategory = "Malo";
+          }
+
+          // Determinar decision si no existe
+          let decision = h.decision;
+          const riskLevel = h.risk_level || "MEDIO";
+          if (!decision) {
+            if (riskLevel === "BAJO") decision = "APROBADO";
+            else if (riskLevel === "MEDIO")
+              decision = "APROBADO CON CONDICIONES";
+            else decision = "RECHAZADO";
+          }
+
+          // Calcular approved_amount si no existe
+          const loanAmount = h.loan_amnt || h.loan_amount || 0;
+          let approvedAmount = h.approved_amount;
+          if (approvedAmount === undefined) {
+            if (riskLevel === "BAJO") approvedAmount = loanAmount;
+            else if (riskLevel === "MEDIO") approvedAmount = loanAmount * 0.8;
+            else approvedAmount = 0;
+          }
+
+          return {
+            index: idx,
+            prediction:
+              h.prediction !== undefined
+                ? h.prediction
+                : riskLevel === "ALTO"
+                ? 1
+                : 0,
+            risk_level: riskLevel,
+            probability_default: probDefault,
+            probability_payment: h.probability_payment || 1 - probDefault,
+            confidence: h.confidence || 0.8,
+            credit_score: creditScore,
+            score_category: scoreCategory,
+            decision: decision,
+            approved_amount: approvedAmount,
+            suggested_rate: h.suggested_rate || h.loan_int_rate || 10,
+            loan_info: {
+              loan_amnt: loanAmount,
+              loan_intent: h.loan_intent,
+            },
+            client_name: h.client_name || h.name,
+            person_income: h.person_income || h.income || 0,
+            source: h.source || "individual",
+            timestamp: h.timestamp,
+          };
+        });
+
+        filteredPredictions = [...allPredictions];
+
+        // Calcular summary
+        const summary = calculateSummary(allPredictions);
+
+        // Update summary
+        updateSummary(summary);
+
+        // Create charts
+        createCharts(summary);
+
+        // Populate table
+        currentPage = 1;
+        updateTable();
+
+        // Show sections
+        summarySection.classList.remove("hidden");
+        chartsSection.classList.remove("hidden");
+        tableSection.classList.remove("hidden");
+
+        // Enable export
+        document.getElementById("btnExport").disabled = false;
+
+        showToast(
+          `Cargadas ${historyData.length} evaluaciones del historial`,
+          "success"
+        );
+      } catch (error) {
+        showToast("Error al cargar historial: " + error.message, "error");
+        infoBanner.classList.remove("hidden");
+      } finally {
+        loadingState.classList.add("hidden");
+        btnLoadHistory.disabled = false;
+        btnLoadHistory.innerHTML = `<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25M9 16.5v.75m3-3v3M15 12v5.25m-4.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"></path></svg> Cargar Historial`;
+      }
+    }, 300);
+  }
+
+  function calculateSummary(predictions) {
+    const total = predictions.length;
+    const defaults = predictions.filter((p) => p.prediction === 1).length;
+    const payments = total - defaults;
+    const avgProb =
+      (predictions.reduce((sum, p) => sum + (p.probability_default || 0), 0) /
+        total) *
+      100;
+
+    const riskDist = {};
+    predictions.forEach((p) => {
+      const level = p.risk_level || "MEDIO";
+      riskDist[level] = (riskDist[level] || 0) + 1;
+    });
+
+    return {
+      total_records: total,
+      predicted_defaults: defaults,
+      predicted_payments: payments,
+      avg_default_probability: avgProb,
+      risk_distribution: riskDist,
+      high_risk_count: riskDist["ALTO"] || 0,
+    };
+  }
+
+  function formatCurrency(value) {
+    return (
+      "$" +
+      parseFloat(value).toLocaleString("en-US", {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      })
+    );
+  }
+
+  async function loadTestData() {
+    const btnLoad = document.getElementById("btnLoad");
+    const loadingState = document.getElementById("loadingState");
+    const summarySection = document.getElementById("summarySection");
+    const chartsSection = document.getElementById("chartsSection");
+    const tableSection = document.getElementById("tableSection");
+    const infoBanner = document.getElementById("infoBanner");
+
+    // Show loading
+    btnLoad.disabled = true;
+    btnLoad.innerHTML = `<svg class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Analizando...`;
+    loadingState.classList.remove("hidden");
+    summarySection.classList.add("hidden");
+    chartsSection.classList.add("hidden");
+    tableSection.classList.add("hidden");
+    infoBanner.classList.add("hidden");
+
+    try {
+      const response = await fetch("/api/load-test-data");
+      const result = await response.json();
+
+      if (result.success) {
+        dataSource = "test";
+        allData = result.data;
+        allPredictions = result.predictions;
+        filteredPredictions = [...allPredictions];
+
+        // Update summary
+        updateSummary(result.summary);
+
+        // Create charts
+        createCharts(result.summary);
+
+        // Populate table
+        currentPage = 1;
+        updateTable();
+
+        // Show sections
+        summarySection.classList.remove("hidden");
+        chartsSection.classList.remove("hidden");
+        tableSection.classList.remove("hidden");
+
+        // Enable export
+        document.getElementById("btnExport").disabled = false;
+
+        showToast("Dataset de prueba cargado (500 registros)", "success");
+      } else {
+        showToast("Error: " + result.error, "error");
+        infoBanner.classList.remove("hidden");
+      }
+    } catch (error) {
+      showToast("Error de conexion: " + error.message, "error");
+      infoBanner.classList.remove("hidden");
+    } finally {
+      loadingState.classList.add("hidden");
+      btnLoad.disabled = false;
+      btnLoad.innerHTML = `<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5"></path></svg> Dataset Prueba`;
+    }
+  }
+
+  function updateSummary(summary) {
+    document.getElementById("totalRecords").textContent =
+      summary.total_records.toLocaleString();
+    document.getElementById("predictedPayments").textContent =
+      summary.predicted_payments.toLocaleString();
+    document.getElementById("predictedDefaults").textContent =
+      summary.predicted_defaults.toLocaleString();
+    document.getElementById("avgProbability").textContent =
+      summary.avg_default_probability.toFixed(1) + "%";
+
+    const paymentPct = (
+      (summary.predicted_payments / summary.total_records) *
+      100
+    ).toFixed(1);
+    const defaultPct = (
+      (summary.predicted_defaults / summary.total_records) *
+      100
+    ).toFixed(1);
+    document.getElementById("paymentPercent").textContent =
+      paymentPct + "% de la cartera";
+    document.getElementById("defaultPercent").textContent =
+      defaultPct + "% de la cartera";
+
+    // Update risk counts
+    const riskDist = summary.risk_distribution || {};
+    document.getElementById("riskLowCount").textContent = (
+      riskDist["BAJO"] || 0
+    ).toLocaleString();
+    document.getElementById("riskMedCount").textContent = (
+      riskDist["MEDIO"] || 0
+    ).toLocaleString();
+    document.getElementById("riskHighCount").textContent = (
+      riskDist["ALTO"] || 0
+    ).toLocaleString();
+  }
+
+  function createCharts(summary) {
+    // Destroy existing charts
+    if (riskChart) riskChart.destroy();
+    if (probChart) probChart.destroy();
+
+    // Risk Distribution Doughnut Chart
+    const riskCtx = document.getElementById("riskDistChart").getContext("2d");
+    const riskDist = summary.risk_distribution || {};
+    riskChart = new Chart(riskCtx, {
+      type: "doughnut",
+      data: {
+        labels: ["Riesgo Bajo", "Riesgo Medio", "Riesgo Alto"],
+        datasets: [
+          {
+            data: [
+              riskDist["BAJO"] || 0,
+              riskDist["MEDIO"] || 0,
+              riskDist["ALTO"] || 0,
+            ],
+            backgroundColor: ["#10b981", "#f59e0b", "#ef4444"],
+            borderWidth: 0,
+            hoverOffset: 4,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: "65%",
+        plugins: {
+          legend: {
+            position: "bottom",
+            labels: {
+              padding: 20,
+              usePointStyle: true,
+              pointStyle: "circle",
+            },
+          },
+        },
+      },
+    });
+
+    // Probability Distribution Histogram
+    const probCtx = document.getElementById("probDistChart").getContext("2d");
+    const probBuckets = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    allPredictions.forEach((p) => {
+      const bucket = Math.min(9, Math.floor(p.probability_default * 10));
+      probBuckets[bucket]++;
+    });
+
+    probChart = new Chart(probCtx, {
+      type: "bar",
+      data: {
+        labels: [
+          "0-10%",
+          "10-20%",
+          "20-30%",
+          "30-40%",
+          "40-50%",
+          "50-60%",
+          "60-70%",
+          "70-80%",
+          "80-90%",
+          "90-100%",
+        ],
+        datasets: [
+          {
+            label: "Numero de Prestamos",
+            data: probBuckets,
+            backgroundColor: probBuckets.map((_, i) => {
+              if (i < 3) return "#10b981";
+              if (i < 6) return "#f59e0b";
+              return "#ef4444";
+            }),
+            borderRadius: 4,
+            borderSkipped: false,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: "Cantidad de Prestamos",
+            },
+          },
+          x: {
+            title: {
+              display: true,
+              text: "Rango de Probabilidad",
+            },
+          },
+        },
+        plugins: {
+          legend: {
+            display: false,
+          },
+        },
+      },
+    });
+  }
+
+  function updateTable() {
+    const tbody = document.getElementById("dataTableBody");
+    const start = (currentPage - 1) * pageSize;
+    const end = Math.min(start + pageSize, filteredPredictions.length);
+    const pageData = filteredPredictions.slice(start, end);
+
+    tbody.innerHTML = "";
+
+    pageData.forEach((pred, idx) => {
+      const data = allData[allPredictions.indexOf(pred)];
+      // Usar nombre del historial si existe, sino generar uno
+      const clientName =
+        pred.client_name || data?.client_name || getRandomName(pred.index);
+
+      const row = document.createElement("tr");
+      row.className = "hover:bg-gray-50 cursor-pointer transition-colors";
+      row.onclick = () => openDetailModal(pred, data, clientName);
+
+      // Obtener todos los campos necesarios
+      const loanAmount = data?.loan_amnt || pred.loan_info?.loan_amnt || 0;
+      const personIncome = data?.person_income || pred.person_income || 0;
+      const creditScore = pred.credit_score || 0;
+      const scoreCategory = pred.score_category || "-";
+      const decision = pred.decision || "-";
+      const approvedAmount = pred.approved_amount || 0;
+
+      // Clases para score
+      const scoreClass =
+        creditScore >= 740
+          ? "text-emerald-600"
+          : creditScore >= 670
+          ? "text-blue-600"
+          : creditScore >= 580
+          ? "text-amber-600"
+          : "text-red-600";
+
+      // Clases para decisión
+      const decisionClass =
+        decision === "APROBADO"
+          ? "bg-emerald-100 text-emerald-800"
+          : decision === "APROBADO CON CONDICIONES"
+          ? "bg-amber-100 text-amber-800"
+          : "bg-red-100 text-red-800";
+
+      // Badge de fuente para datos de historial
+      const sourceLabel =
+        pred.source === "individual"
+          ? '<span class="text-xs text-blue-600">Individual</span>'
+          : pred.source === "batch"
+          ? '<span class="text-xs text-purple-600">Lote</span>'
+          : pred.source === "preload"
+          ? '<span class="text-xs text-slate-500">Precargado</span>'
+          : "";
+
+      const riskColors = {
+        BAJO: "bg-green-100 text-green-800",
+        MEDIO: "bg-amber-100 text-amber-800",
+        ALTO: "bg-red-100 text-red-800",
+      };
+
+      row.innerHTML = `
+            <td class="px-3 py-3">
+                <div class="flex items-center gap-2">
+                    <div class="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-600 font-medium text-xs">
+                        ${clientName
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")
+                          .substring(0, 2)}
+                    </div>
+                    <div>
+                        <p class="font-medium text-gray-900 text-sm">${clientName}</p>
+                        <p class="text-xs text-gray-500">${
+                          sourceLabel || "ID: " + pred.index
+                        }</p>
+                    </div>
+                </div>
+            </td>
+            <td class="px-3 py-3">
+                <p class="text-sm text-gray-700">${formatCurrency(
+                  personIncome
+                )}</p>
+                <p class="text-xs text-gray-400">/año</p>
+            </td>
+            <td class="px-3 py-3">
+                <p class="font-medium text-gray-900 text-sm">${formatCurrency(
+                  loanAmount
+                )}</p>
+            </td>
+            <td class="px-3 py-3">
+                <div class="text-center">
+                    <p class="font-bold ${scoreClass}">${creditScore}</p>
+                    <p class="text-xs text-gray-500">${scoreCategory}</p>
+                </div>
+            </td>
+            <td class="px-3 py-3">
+                <span class="inline-flex px-2 py-0.5 text-xs font-semibold rounded-full ${
+                  riskColors[pred.risk_level]
+                }">${pred.risk_level}</span>
+            </td>
+            <td class="px-3 py-3">
+                <div class="flex items-center gap-2">
+                    <div class="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden" style="width: 50px;">
+                        <div class="h-full ${
+                          pred.probability_default > 0.6
+                            ? "bg-red-500"
+                            : pred.probability_default > 0.3
+                            ? "bg-amber-500"
+                            : "bg-green-500"
+                        }" style="width: ${(
+        pred.probability_default * 100
+      ).toFixed(0)}%"></div>
+                    </div>
+                    <span class="text-xs font-medium text-gray-700">${(
+                      pred.probability_default * 100
+                    ).toFixed(1)}%</span>
+                </div>
+            </td>
+            <td class="px-3 py-3">
+                <span class="inline-flex px-2 py-0.5 text-xs font-semibold rounded-full ${decisionClass}">
+                    ${
+                      decision === "APROBADO CON CONDICIONES"
+                        ? "COND."
+                        : decision
+                    }
+                </span>
+            </td>
+            <td class="px-3 py-3">
+                <p class="font-medium ${
+                  approvedAmount > 0 ? "text-emerald-600" : "text-gray-400"
+                } text-sm">
+                    ${approvedAmount > 0 ? formatCurrency(approvedAmount) : "-"}
+                </p>
+            </td>
+            <td class="px-3 py-3 text-center">
+                <button onclick="event.stopPropagation(); openDetailModal(filteredPredictions[${
+                  start + idx
+                }], allData[allPredictions.indexOf(filteredPredictions[${
+        start + idx
+      }])], '${clientName}')" class="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium text-primary-700 bg-primary-50 rounded-lg hover:bg-primary-100 transition-colors">
+                    <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    Ver
+                </button>
+            </td>
+        `;
+      tbody.appendChild(row);
+    });
+
+    // Update pagination info
+    document.getElementById("showingFrom").textContent =
+      filteredPredictions.length > 0 ? start + 1 : 0;
+    document.getElementById("showingTo").textContent = end;
+    document.getElementById("showingTotal").textContent =
+      filteredPredictions.length;
+    document.getElementById("currentPage").textContent = currentPage;
+    document.getElementById("totalPages").textContent =
+      Math.ceil(filteredPredictions.length / pageSize) || 1;
+
+    // Update buttons
+    document.getElementById("btnPrev").disabled = currentPage === 1;
+    document.getElementById("btnNext").disabled =
+      end >= filteredPredictions.length;
+  }
+
+  function filterTable() {
+    const search = document.getElementById("searchInput").value.toLowerCase();
+    const riskFilter = document.getElementById("riskFilter").value;
+    const decisionFilter = document.getElementById("decisionFilter").value;
+
+    filteredPredictions = allPredictions.filter((pred, idx) => {
+      const data = allData[idx];
+      const clientName = (
+        pred.client_name ||
+        data?.client_name ||
+        getRandomName(pred.index)
+      ).toLowerCase();
+      const matchesSearch =
+        !search ||
+        clientName.includes(search) ||
+        pred.index.toString().includes(search);
+      const matchesRisk = !riskFilter || pred.risk_level === riskFilter;
+      const matchesDecision =
+        !decisionFilter || pred.decision === decisionFilter;
+      return matchesSearch && matchesRisk && matchesDecision;
+    });
+
+    currentPage = 1;
+    updateTable();
+  }
+
+  function changePage(delta) {
+    const maxPage = Math.ceil(filteredPredictions.length / pageSize);
+    currentPage = Math.max(1, Math.min(maxPage, currentPage + delta));
+    updateTable();
+  }
+
+  function openDetailModal(pred, data, clientName) {
+    const modal = document.getElementById("detailModal");
+
+    // Set client name
+    document.getElementById("modalClientName").textContent = clientName;
+
+    // Set risk badge
+    const riskBadge = document.getElementById("modalRiskBadge");
+    const riskStyles = {
+      BAJO: "bg-green-100 text-green-800",
+      MEDIO: "bg-amber-100 text-amber-800",
+      ALTO: "bg-red-100 text-red-800",
+    };
+    const riskLabels = {
+      BAJO: "Riesgo Bajo - Alta probabilidad de pago",
+      MEDIO: "Riesgo Medio - Requiere seguimiento",
+      ALTO: "Riesgo Alto - Atencion prioritaria",
+    };
+    riskBadge.className = `inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold ${
+      riskStyles[pred.risk_level]
+    }`;
+    riskBadge.innerHTML = `<svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>${
+      riskLabels[pred.risk_level]
+    }`;
+
+    // Set probabilities
+    const paymentProb = (pred.probability_payment * 100).toFixed(1);
+    const defaultProb = (pred.probability_default * 100).toFixed(1);
+    document.getElementById("modalPaymentProb").textContent = paymentProb + "%";
+    document.getElementById("modalDefaultProb").textContent = defaultProb + "%";
+    document.getElementById("modalPaymentBar").style.width = paymentProb + "%";
+    document.getElementById("modalDefaultBar").style.width = defaultProb + "%";
+
+    // Set client info
+    document.getElementById("modalAge").textContent =
+      (data?.person_age || "-") + " anos";
+    document.getElementById("modalIncome").textContent =
+      formatCurrency(data?.person_income || 0) + "/ano";
+    document.getElementById("modalEmpLength").textContent =
+      (data?.person_emp_length || "-") + " anos";
+    document.getElementById("modalHomeOwnership").textContent =
+      HOME_LABELS[data?.person_home_ownership] ||
+      data?.person_home_ownership ||
+      "-";
+
+    // Set loan info
+    document.getElementById("modalLoanAmount").textContent = formatCurrency(
+      data?.loan_amnt || 0
+    );
+    document.getElementById("modalIntRate").textContent =
+      (data?.loan_int_rate || "-") + "%";
+    document.getElementById("modalGrade").textContent =
+      "Grado " + (data?.loan_grade || "-");
+    document.getElementById("modalIntent").textContent =
+      INTENT_LABELS[data?.loan_intent] || data?.loan_intent || "-";
+
+    // Set credit history
+    document.getElementById("modalCredHist").textContent =
+      (data?.cb_person_cred_hist_length || "-") + " anos";
+    const hasDefault = data?.cb_person_default_on_file === "Y";
+    document.getElementById("modalDefaultHistory").textContent = hasDefault
+      ? "Si"
+      : "No";
+    document.getElementById(
+      "modalDefaultHistory"
+    ).className = `text-sm font-medium ${
+      hasDefault ? "text-red-600" : "text-green-600"
+    }`;
+
+    modal.classList.remove("hidden");
+  }
+
+  function closeModal() {
+    document.getElementById("detailModal").classList.add("hidden");
+  }
+
+  async function exportPredictions() {
+    try {
+      const response = await fetch("/api/export-predictions");
+      if (!response.ok) throw new Error("Error al exportar");
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download =
+        "reporte_cartera_" + new Date().toISOString().split("T")[0] + ".csv";
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      a.remove();
+
+      showToast("Reporte exportado exitosamente", "success");
+    } catch (error) {
+      showToast("Error al exportar: " + error.message, "error");
+    }
+  }
+
+  function showToast(message, type = "info") {
+    const colors = {
+      success: "bg-green-500",
+      error: "bg-red-500",
+      info: "bg-blue-500",
+      warning: "bg-amber-500",
+    };
+
+    const toast = document.createElement("div");
+    toast.className = `fixed bottom-4 right-4 ${colors[type]} text-white px-6 py-3 rounded-lg shadow-lg z-50 transform transition-all duration-300 translate-y-full`;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+
+    setTimeout(() => toast.classList.remove("translate-y-full"), 10);
+    setTimeout(() => {
+      toast.classList.add("translate-y-full");
+      setTimeout(() => toast.remove(), 300);
+    }, 3000);
+  }
+
+  // Close modal with Escape key
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeModal();
+  });
+</script>
+{% endblock %}

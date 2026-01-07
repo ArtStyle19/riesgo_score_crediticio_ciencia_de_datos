@@ -1,0 +1,801 @@
+{% extends "base.html" %} {% block title %}Evaluación por Lote - Sistema de
+Evaluación Crediticia{% endblock %} {% block page_title %}
+<span class="flex items-center gap-2">
+  <svg
+    class="h-6 w-6 text-primary-600"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+    ></path>
+  </svg>
+  Evaluación por Lote
+</span>
+{% endblock %} {% block content %}
+<div class="space-y-6">
+  <!-- Instrucciones -->
+  <div class="glass-card p-4 border border-primary-200/30">
+    <div class="flex items-start gap-3">
+      <svg
+        class="h-5 w-5 text-primary-600 mt-0.5"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+        ></path>
+      </svg>
+      <div>
+        <h3 class="text-sm font-semibold text-primary-800">Instrucciones</h3>
+        <p class="mt-1 text-sm text-slate-600">
+          Cargue un archivo CSV con las solicitudes de crédito. El archivo debe
+          contener las siguientes columnas:
+        </p>
+        <div class="mt-2 flex flex-wrap gap-2">
+          <code
+            class="rounded-lg bg-primary-500/10 backdrop-blur-sm px-2 py-0.5 text-xs text-primary-800"
+            >person_age</code
+          >
+          <code
+            class="rounded-lg bg-primary-500/10 backdrop-blur-sm px-2 py-0.5 text-xs text-primary-800"
+            >person_income</code
+          >
+          <code
+            class="rounded-lg bg-primary-500/10 backdrop-blur-sm px-2 py-0.5 text-xs text-primary-800"
+            >person_home_ownership</code
+          >
+          <code
+            class="rounded-lg bg-primary-500/10 backdrop-blur-sm px-2 py-0.5 text-xs text-primary-800"
+            >person_emp_length</code
+          >
+          <code
+            class="rounded-lg bg-primary-500/10 backdrop-blur-sm px-2 py-0.5 text-xs text-primary-800"
+            >loan_intent</code
+          >
+          <code
+            class="rounded-lg bg-primary-500/10 backdrop-blur-sm px-2 py-0.5 text-xs text-primary-800"
+            >loan_grade</code
+          >
+          <code
+            class="rounded-lg bg-primary-500/10 backdrop-blur-sm px-2 py-0.5 text-xs text-primary-800"
+            >loan_amnt</code
+          >
+          <code
+            class="rounded-lg bg-primary-500/10 backdrop-blur-sm px-2 py-0.5 text-xs text-primary-800"
+            >loan_int_rate</code
+          >
+          <code
+            class="rounded-lg bg-primary-500/10 backdrop-blur-sm px-2 py-0.5 text-xs text-primary-800"
+            >loan_percent_income</code
+          >
+          <code
+            class="rounded-lg bg-primary-500/10 backdrop-blur-sm px-2 py-0.5 text-xs text-primary-800"
+            >cb_person_default_on_file</code
+          >
+          <code
+            class="rounded-lg bg-primary-500/10 backdrop-blur-sm px-2 py-0.5 text-xs text-primary-800"
+            >cb_person_cred_hist_length</code
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Área de Carga -->
+  <div class="glass-card-strong p-6">
+    <h2 class="text-lg font-semibold text-slate-800">Cargar Archivo</h2>
+
+    <!-- Drop Zone -->
+    <div
+      id="dropZone"
+      class="drop-zone mt-4 flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-white/50 bg-white/30 backdrop-blur-sm p-12 transition-all duration-300 hover:border-primary-400 hover:bg-white/50"
+    >
+      <svg
+        class="h-12 w-12 text-slate-400"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+        ></path>
+      </svg>
+      <p class="mt-4 text-sm font-medium text-slate-700">
+        Arrastre y suelte su archivo aquí
+      </p>
+      <p class="mt-1 text-xs text-slate-500">o</p>
+      <label
+        class="mt-2 cursor-pointer rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700"
+      >
+        Seleccionar archivo
+        <input type="file" id="fileInput" accept=".csv,.xlsx" class="hidden" />
+      </label>
+      <p class="mt-3 text-xs text-slate-500">
+        Formatos soportados: CSV, XLSX (máx. 16MB)
+      </p>
+    </div>
+
+    <!-- Archivo Seleccionado -->
+    <div id="fileInfo" class="mt-4 hidden glass-light rounded-xl p-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div
+            class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400/20 to-emerald-600/20 backdrop-blur-sm"
+          >
+            <svg
+              class="h-5 w-5 text-emerald-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              ></path>
+            </svg>
+          </div>
+          <div>
+            <p id="fileName" class="text-sm font-medium text-slate-800"></p>
+            <p id="fileSize" class="text-xs text-slate-500"></p>
+          </div>
+        </div>
+        <button
+          onclick="clearFile()"
+          class="text-slate-400 hover:text-red-500 transition-colors"
+        >
+          <svg
+            class="h-5 w-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            ></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Botón Procesar -->
+    <div class="mt-6 flex justify-end">
+      <button
+        id="processBtn"
+        onclick="processFile()"
+        disabled
+        class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-primary-600 to-primary-700 px-6 py-2.5 text-sm font-medium text-white shadow-lg shadow-primary-500/25 hover:shadow-xl hover:from-primary-500 hover:to-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:bg-slate-300 disabled:shadow-none disabled:cursor-not-allowed transition-all duration-300"
+      >
+        <svg
+          class="h-4 w-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+          ></path>
+        </svg>
+        Procesar Solicitudes
+      </button>
+    </div>
+  </div>
+
+  <!-- Resultados -->
+  <div id="resultsSection" class="hidden space-y-6">
+    <!-- Métricas del Lote -->
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div class="glass-card p-6">
+        <div class="flex items-center gap-4">
+          <div
+            class="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-blue-400/20 to-blue-600/20 backdrop-blur-sm"
+          >
+            <svg
+              class="h-6 w-6 text-blue-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              ></path>
+            </svg>
+          </div>
+          <div>
+            <p class="text-sm font-medium text-slate-500">Total Procesadas</p>
+            <p id="metricTotal" class="text-2xl font-bold text-slate-800">0</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass-card p-6">
+        <div class="flex items-center gap-4">
+          <div
+            class="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400/20 to-emerald-600/20 backdrop-blur-sm"
+          >
+            <svg
+              class="h-6 w-6 text-emerald-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+              ></path>
+            </svg>
+          </div>
+          <div>
+            <p class="text-sm font-medium text-slate-500">Aprobadas</p>
+            <p id="metricApproved" class="text-2xl font-bold text-emerald-600">
+              0
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass-card p-6">
+        <div class="flex items-center gap-4">
+          <div
+            class="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400/20 to-amber-600/20 backdrop-blur-sm"
+          >
+            <svg
+              class="h-6 w-6 text-yellow-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              ></path>
+            </svg>
+          </div>
+          <div>
+            <p class="text-sm font-medium text-slate-500">Condicionales</p>
+            <p
+              id="metricConditional"
+              class="text-2xl font-bold text-yellow-600"
+            >
+              0
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass-card rounded-xl p-6">
+        <div class="flex items-center gap-4">
+          <div
+            class="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-red-400/20 to-red-600/20 backdrop-blur-sm"
+          >
+            <svg
+              class="h-6 w-6 text-red-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+              ></path>
+            </svg>
+          </div>
+          <div>
+            <p class="text-sm font-medium text-slate-500">Rechazadas</p>
+            <p id="metricRejected" class="text-2xl font-bold text-red-600">0</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resumen Financiero -->
+    <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
+      <div
+        class="glass-card rounded-xl bg-gradient-to-br from-primary-500/90 to-primary-700/90 p-6 text-white shadow-lg"
+      >
+        <p class="text-sm font-medium text-primary-100">Tasa de Aprobación</p>
+        <p id="metricApprovalRate" class="mt-2 text-4xl font-bold">0%</p>
+        <div class="mt-4 h-2 w-full rounded-full bg-white/20">
+          <div
+            id="approvalBar"
+            class="h-2 rounded-full bg-white"
+            style="width: 0%"
+          ></div>
+        </div>
+      </div>
+
+      <div class="glass-card rounded-xl p-6">
+        <p class="text-sm font-medium text-slate-500">Monto Total Solicitado</p>
+        <p
+          id="metricTotalRequested"
+          class="mt-2 text-2xl font-bold text-slate-900"
+        >
+          $0
+        </p>
+      </div>
+
+      <div class="glass-card rounded-xl p-6">
+        <p class="text-sm font-medium text-slate-500">Monto Total Aprobado</p>
+        <p
+          id="metricTotalApproved"
+          class="mt-2 text-2xl font-bold text-green-600"
+        >
+          $0
+        </p>
+      </div>
+    </div>
+
+    <!-- Tabla de Resultados -->
+    <div class="glass-card rounded-xl">
+      <div
+        class="flex items-center justify-between border-b border-white/30 p-6"
+      >
+        <h3 class="text-lg font-semibold text-slate-900">
+          Resultados Detallados
+        </h3>
+        <button
+          id="downloadBtn"
+          onclick="downloadResults()"
+          class="inline-flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700"
+        >
+          <svg
+            class="h-4 w-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+            ></path>
+          </svg>
+          Descargar CSV
+        </button>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead class="glass-light">
+            <tr
+              class="text-left text-xs font-medium uppercase tracking-wider text-slate-600"
+            >
+              <th class="px-6 py-3">#</th>
+              <th class="px-6 py-3">Cliente</th>
+              <th class="px-6 py-3">Edad</th>
+              <th class="px-6 py-3">Ingreso</th>
+              <th class="px-6 py-3">Monto Solicitado</th>
+              <th class="px-6 py-3">Score</th>
+              <th class="px-6 py-3">Prob. Default</th>
+              <th class="px-6 py-3">Decisión</th>
+              <th class="px-6 py-3">Monto Aprobado</th>
+              <th class="px-6 py-3">Tasa</th>
+            </tr>
+          </thead>
+          <tbody id="resultsTable" class="divide-y divide-white/20">
+            <!-- Los resultados se insertarán aquí -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Errores -->
+    <div
+      id="errorsSection"
+      class="hidden glass-card rounded-xl bg-red-500/10 p-6"
+    >
+      <h3 class="flex items-center gap-2 text-lg font-semibold text-red-800">
+        <svg
+          class="h-5 w-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          ></path>
+        </svg>
+        Errores de Procesamiento
+      </h3>
+      <ul id="errorsList" class="mt-4 space-y-2 text-sm text-red-700"></ul>
+    </div>
+  </div>
+
+  <!-- Plantilla de Ejemplo -->
+  <div class="glass-card rounded-xl p-6">
+    <h3 class="text-lg font-semibold text-slate-900">Plantilla de Ejemplo</h3>
+    <p class="text-sm text-slate-500">
+      Descargue una plantilla CSV con el formato correcto
+    </p>
+
+    <div class="mt-4 overflow-x-auto">
+      <table class="w-full text-xs">
+        <thead class="glass-light rounded-t-lg">
+          <tr class="text-left font-medium text-slate-600">
+            <th class="px-3 py-2">person_age</th>
+            <th class="px-3 py-2">person_income</th>
+            <th class="px-3 py-2">person_home_ownership</th>
+            <th class="px-3 py-2">person_emp_length</th>
+            <th class="px-3 py-2">loan_intent</th>
+            <th class="px-3 py-2">loan_grade</th>
+            <th class="px-3 py-2">loan_amnt</th>
+            <th class="px-3 py-2">loan_int_rate</th>
+            <th class="px-3 py-2">loan_percent_income</th>
+            <th class="px-3 py-2">cb_person_default_on_file</th>
+            <th class="px-3 py-2">cb_person_cred_hist_length</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-white/20">
+          <tr class="text-slate-600">
+            <td class="px-3 py-2">35</td>
+            <td class="px-3 py-2">60000</td>
+            <td class="px-3 py-2">RENT</td>
+            <td class="px-3 py-2">5</td>
+            <td class="px-3 py-2">PERSONAL</td>
+            <td class="px-3 py-2">B</td>
+            <td class="px-3 py-2">15000</td>
+            <td class="px-3 py-2">11.5</td>
+            <td class="px-3 py-2">0.25</td>
+            <td class="px-3 py-2">N</td>
+            <td class="px-3 py-2">4</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <button
+      onclick="downloadTemplate()"
+      class="mt-4 inline-flex items-center gap-2 rounded-lg glass-light px-4 py-2 text-sm font-medium text-slate-700 hover:bg-white/50 transition-colors"
+    >
+      <svg
+        class="h-4 w-4"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+        ></path>
+      </svg>
+      Descargar Plantilla CSV
+    </button>
+  </div>
+</div>
+{% endblock %} {% block extra_scripts %}
+<script>
+  let selectedFile = null;
+  let currentBatchId = null;
+
+  // Drop Zone
+  const dropZone = document.getElementById("dropZone");
+  const fileInput = document.getElementById("fileInput");
+
+  // Eventos de drag and drop
+  ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
+    dropZone.addEventListener(eventName, preventDefaults, false);
+  });
+
+  function preventDefaults(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  ["dragenter", "dragover"].forEach((eventName) => {
+    dropZone.addEventListener(
+      eventName,
+      () => {
+        dropZone.classList.add("dragover");
+      },
+      false
+    );
+  });
+
+  ["dragleave", "drop"].forEach((eventName) => {
+    dropZone.addEventListener(
+      eventName,
+      () => {
+        dropZone.classList.remove("dragover");
+      },
+      false
+    );
+  });
+
+  dropZone.addEventListener("drop", (e) => {
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      handleFile(files[0]);
+    }
+  });
+
+  fileInput.addEventListener("change", (e) => {
+    if (e.target.files.length > 0) {
+      handleFile(e.target.files[0]);
+    }
+  });
+
+  function handleFile(file) {
+    const validTypes = [
+      "text/csv",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "application/vnd.ms-excel",
+    ];
+    const validExtensions = [".csv", ".xlsx", ".xls"];
+
+    const fileExtension = "." + file.name.split(".").pop().toLowerCase();
+
+    if (!validExtensions.includes(fileExtension)) {
+      showToast("Formato de archivo no válido. Use CSV o XLSX", "error");
+      return;
+    }
+
+    if (file.size > 16 * 1024 * 1024) {
+      showToast("El archivo excede el tamaño máximo de 16MB", "error");
+      return;
+    }
+
+    selectedFile = file;
+    document.getElementById("fileName").textContent = file.name;
+    document.getElementById("fileSize").textContent = formatFileSize(file.size);
+    document.getElementById("fileInfo").classList.remove("hidden");
+    document.getElementById("processBtn").disabled = false;
+
+    showToast("Archivo cargado correctamente", "success");
+  }
+
+  function clearFile() {
+    selectedFile = null;
+    fileInput.value = "";
+    document.getElementById("fileInfo").classList.add("hidden");
+    document.getElementById("processBtn").disabled = true;
+  }
+
+  function formatFileSize(bytes) {
+    if (bytes < 1024) return bytes + " B";
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+    return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+  }
+
+  async function processFile() {
+    if (!selectedFile) return;
+
+    const processBtn = document.getElementById("processBtn");
+    const originalText = processBtn.innerHTML;
+    showLoading(processBtn);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+
+      const response = await fetch("/api/evaluar-lote", {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        currentBatchId = result.batch_id;
+        displayResults(result);
+        showToast(
+          `Procesadas ${result.metrics.total_processed} solicitudes`,
+          "success"
+        );
+      } else {
+        showToast(result.error || "Error al procesar el archivo", "error");
+      }
+    } catch (error) {
+      showToast("Error de conexión con el servidor", "error");
+      console.error(error);
+    } finally {
+      hideLoading(processBtn, originalText);
+    }
+  }
+
+  function displayResults(data) {
+    const resultsSection = document.getElementById("resultsSection");
+    resultsSection.classList.remove("hidden");
+
+    // Actualizar métricas
+    const m = data.metrics;
+    document.getElementById("metricTotal").textContent = m.total_processed;
+    document.getElementById("metricApproved").textContent = m.approved;
+    document.getElementById("metricConditional").textContent = m.conditional;
+    document.getElementById("metricRejected").textContent = m.rejected;
+    document.getElementById("metricApprovalRate").textContent =
+      m.approval_rate + "%";
+    document.getElementById("approvalBar").style.width = m.approval_rate + "%";
+    document.getElementById("metricTotalRequested").textContent =
+      formatCurrency(m.total_requested);
+    document.getElementById("metricTotalApproved").textContent = formatCurrency(
+      m.total_approved
+    );
+
+    // Llenar tabla
+    const tbody = document.getElementById("resultsTable");
+    tbody.innerHTML = "";
+
+    data.results.forEach((r, idx) => {
+      const decisionClass =
+        r.decision === "APROBADO"
+          ? "bg-green-100 text-green-800"
+          : r.decision === "APROBADO CON CONDICIONES"
+          ? "bg-yellow-100 text-yellow-800"
+          : "bg-red-100 text-red-800";
+
+      const scoreClass =
+        r.credit_score >= 740
+          ? "text-green-600"
+          : r.credit_score >= 670
+          ? "text-yellow-600"
+          : "text-red-600";
+
+      const row = `
+                <tr class="hover:bg-white/30 transition-colors">
+                    <td class="px-6 py-4 text-sm text-slate-500">${r.row}</td>
+                    <td class="px-6 py-4">
+                        <p class="text-sm font-medium text-slate-900">${
+                          r.name
+                        }</p>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-slate-600">${r.age}</td>
+                    <td class="px-6 py-4 text-sm text-slate-900">${formatCurrency(
+                      r.income
+                    )}</td>
+                    <td class="px-6 py-4 text-sm text-slate-900">${formatCurrency(
+                      r.loan_amount
+                    )}</td>
+                    <td class="px-6 py-4">
+                        <span class="text-sm font-semibold ${scoreClass}">${
+        r.credit_score
+      }</span>
+                        <span class="text-xs text-slate-500 block">${
+                          r.score_category
+                        }</span>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-slate-600">${(
+                      r.probability_default * 100
+                    ).toFixed(1)}%</td>
+                    <td class="px-6 py-4">
+                        <span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${decisionClass}">
+                            ${
+                              r.decision === "APROBADO CON CONDICIONES"
+                                ? "Condicional"
+                                : r.decision === "APROBADO"
+                                ? "Aprobado"
+                                : "Rechazado"
+                            }
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-sm font-medium text-green-600">${formatCurrency(
+                      r.approved_amount
+                    )}</td>
+                    <td class="px-6 py-4 text-sm text-slate-600">${
+                      r.suggested_rate
+                    }%</td>
+                </tr>
+            `;
+      tbody.innerHTML += row;
+    });
+
+    // Guardar en historial
+    saveToHistory(data.results);
+
+    // Mostrar errores si los hay
+    if (data.errors && data.errors.length > 0) {
+      const errorsSection = document.getElementById("errorsSection");
+      const errorsList = document.getElementById("errorsList");
+
+      errorsSection.classList.remove("hidden");
+      errorsList.innerHTML = "";
+
+      data.errors.forEach((err) => {
+        const li = document.createElement("li");
+        li.textContent = `Fila ${err.row}: ${err.errors.join(", ")}`;
+        errorsList.appendChild(li);
+      });
+    } else {
+      document.getElementById("errorsSection").classList.add("hidden");
+    }
+
+    // Scroll a resultados
+    resultsSection.scrollIntoView({ behavior: "smooth" });
+  }
+
+  // Guardar resultados del lote en historial
+  function saveToHistory(results) {
+    const KEY = "credit_risk_evaluations";
+    try {
+      let history = JSON.parse(localStorage.getItem(KEY) || "[]");
+      const timestamp = new Date().toISOString();
+      const batchId = Date.now();
+
+      results.forEach((r, idx) => {
+        const evaluation = {
+          id: batchId + idx,
+          timestamp: timestamp,
+          batch_id: batchId,
+          client_name: r.name || "Cliente Lote #" + r.row,
+          person_age: r.age,
+          person_income: r.income,
+          loan_amnt: r.loan_amount,
+          risk_level: r.risk_level,
+          probability_default: r.probability_default,
+          prediction: r.prediction,
+          credit_score: r.credit_score,
+          decision: r.decision,
+          approved_amount: r.approved_amount,
+          source: "batch",
+        };
+        history.unshift(evaluation);
+      });
+
+      // Mantener maximo 2000 registros
+      if (history.length > 2000) {
+        history = history.slice(0, 2000);
+      }
+      localStorage.setItem(KEY, JSON.stringify(history));
+      showToast(
+        `${results.length} evaluaciones guardadas en historial`,
+        "info"
+      );
+    } catch (e) {
+      console.error("Error guardando en historial:", e);
+    }
+  }
+
+  function downloadResults() {
+    if (!currentBatchId) return;
+    window.location.href = `/api/descargar-resultados/${currentBatchId}`;
+  }
+
+  function downloadTemplate() {
+    const template =
+      "person_age,person_income,person_home_ownership,person_emp_length,loan_intent,loan_grade,loan_amnt,loan_int_rate,loan_percent_income,cb_person_default_on_file,cb_person_cred_hist_length\n35,60000,RENT,5,PERSONAL,B,15000,11.5,0.25,N,4\n45,120000,OWN,15,HOMEIMPROVEMENT,A,25000,7.5,0.21,N,12\n28,35000,RENT,2,EDUCATION,C,10000,13.0,0.29,N,3";
+
+    const blob = new Blob([template], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "plantilla_evaluacion_crediticia.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+
+    showToast("Plantilla descargada", "success");
+  }
+</script>
+{% endblock %}

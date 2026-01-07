@@ -1,0 +1,495 @@
+{% extends "base.html" %} {% set active_page = 'historial' %} {% block title
+%}Historial de Evaluaciones{% endblock %} {% block content %}
+<div class="space-y-6">
+  <div
+    class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+  >
+    <div>
+      <h1 class="text-2xl font-bold text-slate-800">
+        Historial de Evaluaciones
+      </h1>
+      <p class="mt-1 text-sm text-slate-500">
+        Registro de analisis de riesgo crediticio
+      </p>
+    </div>
+    <div class="flex gap-3">
+      <button
+        onclick="exportToCSV()"
+        class="inline-flex items-center gap-2 rounded-xl glass-card px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-white/80 transition-all duration-300"
+      >
+        <svg
+          class="h-5 w-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"
+          ></path>
+        </svg>
+        Exportar
+      </button>
+      <button
+        onclick="clearAllHistory()"
+        class="inline-flex items-center gap-2 rounded-xl bg-red-500/10 backdrop-blur-sm px-4 py-2.5 text-sm font-medium text-red-700 border border-red-200/50 hover:bg-red-500/20 transition-all duration-300"
+      >
+        <svg
+          class="h-5 w-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+          ></path>
+        </svg>
+        Limpiar
+      </button>
+    </div>
+  </div>
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-4">
+    <div class="glass-card p-5">
+      <p class="text-sm font-medium text-slate-500">Total</p>
+      <p class="text-2xl font-bold text-slate-800 mt-1" id="statTotal">0</p>
+    </div>
+    <div class="glass-card p-5">
+      <p class="text-sm font-medium text-slate-500">Riesgo Bajo</p>
+      <p class="text-2xl font-bold text-emerald-600 mt-1" id="statLow">0</p>
+    </div>
+    <div class="glass-card p-5">
+      <p class="text-sm font-medium text-slate-500">Riesgo Medio</p>
+      <p class="text-2xl font-bold text-amber-600 mt-1" id="statMedium">0</p>
+    </div>
+    <div class="glass-card p-5">
+      <p class="text-sm font-medium text-slate-500">Riesgo Alto</p>
+      <p class="text-2xl font-bold text-red-600 mt-1" id="statHigh">0</p>
+    </div>
+  </div>
+  <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+    <div class="glass-card p-6">
+      <h3 class="text-sm font-semibold text-slate-700 mb-4">
+        Distribucion por Riesgo
+      </h3>
+      <div class="h-64"><canvas id="riskChart"></canvas></div>
+    </div>
+    <div class="glass-card p-6">
+      <h3 class="text-sm font-semibold text-slate-700 mb-4">
+        Evaluaciones por Dia
+      </h3>
+      <div class="h-64"><canvas id="timeChart"></canvas></div>
+    </div>
+  </div>
+  <div class="glass-card p-4">
+    <div class="flex flex-col sm:flex-row gap-4">
+      <div class="flex-1">
+        <label class="block text-sm font-medium text-slate-700 mb-1"
+          >Buscar</label
+        >
+        <input type="text" id="searchInput" placeholder="Buscar..." />
+      </div>
+      <div class="w-full sm:w-48">
+        <label class="block text-sm font-medium text-slate-700 mb-1"
+          >Riesgo</label
+        >
+        <select id="riskFilter">
+          <option value="">Todos</option>
+          <option value="BAJO">Bajo</option>
+          <option value="MEDIO">Medio</option>
+          <option value="ALTO">Alto</option>
+        </select>
+      </div>
+      <div class="w-full sm:w-48">
+        <label class="block text-sm font-medium text-slate-700 mb-1"
+          >Fuente</label
+        >
+        <select id="sourceFilter">
+          <option value="">Todas</option>
+          <option value="individual">Individual</option>
+          <option value="batch">Lote</option>
+          <option value="preload">Precargado</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="glass-card-strong overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-white/30">
+        <thead class="bg-white/40">
+          <tr>
+            <th
+              class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase"
+            >
+              Fecha
+            </th>
+            <th
+              class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase"
+            >
+              Cliente
+            </th>
+            <th
+              class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase"
+            >
+              Prestamo
+            </th>
+            <th
+              class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase"
+            >
+              Ingreso
+            </th>
+            <th
+              class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase"
+            >
+              Riesgo
+            </th>
+            <th
+              class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase"
+            >
+              Prob. Default
+            </th>
+            <th
+              class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase"
+            >
+              Fuente
+            </th>
+            <th
+              class="px-4 py-3 text-center text-xs font-semibold text-slate-600 uppercase"
+            >
+              Accion
+            </th>
+          </tr>
+        </thead>
+        <tbody
+          id="historyTable"
+          class="divide-y divide-white/30 bg-white/30"
+        ></tbody>
+      </table>
+    </div>
+    <div id="emptyState" class="hidden py-12 text-center bg-white/30">
+      <p class="text-slate-500">
+        Sin evaluaciones.
+        <a href="/evaluacion" class="text-primary-600 hover:underline"
+          >Crear una</a
+        >
+      </p>
+    </div>
+    <div
+      id="pagination"
+      class="px-4 py-3 border-t border-white/30 flex justify-between bg-white/40"
+    >
+      <span class="text-sm text-slate-600"
+        ><span id="showFrom">0</span>-<span id="showTo">0</span> de
+        <span id="showTotal">0</span></span
+      >
+      <div class="flex gap-2">
+        <button
+          id="btnPrev"
+          disabled
+          class="px-3 py-1 text-sm glass-card hover:bg-white/80 transition-all duration-300 disabled:opacity-50"
+        >
+          Anterior
+        </button>
+        <button
+          id="btnNext"
+          class="px-3 py-1 text-sm glass-card hover:bg-white/80 transition-all duration-300 disabled:opacity-50"
+        >
+          Siguiente
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  var KEY = "credit_risk_evaluations",
+    data = [],
+    filtered = [],
+    page = 1,
+    perPage = 15,
+    rChart = null,
+    tChart = null;
+  document.addEventListener("DOMContentLoaded", function () {
+    load();
+    document.getElementById("searchInput").addEventListener("input", filter);
+    document.getElementById("riskFilter").addEventListener("change", filter);
+    document.getElementById("sourceFilter").addEventListener("change", filter);
+    document.getElementById("btnPrev").addEventListener("click", function () {
+      changePage(-1);
+    });
+    document.getElementById("btnNext").addEventListener("click", function () {
+      changePage(1);
+    });
+  });
+  function load() {
+    try {
+      var s = localStorage.getItem(KEY);
+      data = s ? JSON.parse(s) : [];
+      filtered = data.slice();
+      stats();
+      charts();
+      render();
+    } catch (e) {
+      data = [];
+      filtered = [];
+    }
+  }
+  function save() {
+    localStorage.setItem(KEY, JSON.stringify(data));
+  }
+  // Funcion global para guardar evaluaciones desde otras paginas
+  window.saveEvaluation = function (d) {
+    var e = { id: Date.now(), timestamp: new Date().toISOString() };
+    for (var k in d) e[k] = d[k];
+    data.unshift(e);
+    save();
+  };
+  // Funcion global para guardar multiples evaluaciones (lotes)
+  window.saveBatchEvaluations = function (evaluations) {
+    var timestamp = new Date().toISOString();
+    var batchId = Date.now();
+    for (var i = 0; i < evaluations.length; i++) {
+      var e = {
+        id: batchId + i,
+        timestamp: timestamp,
+        batch_id: batchId,
+        source: "batch",
+      };
+      for (var k in evaluations[i]) e[k] = evaluations[i][k];
+      data.unshift(e);
+    }
+    save();
+  };
+  function stats() {
+    document.getElementById("statTotal").textContent = data.length;
+    var l = 0,
+      m = 0,
+      h = 0;
+    for (var i = 0; i < data.length; i++) {
+      if (data[i].risk_level === "BAJO") l++;
+      else if (data[i].risk_level === "MEDIO") m++;
+      else if (data[i].risk_level === "ALTO") h++;
+    }
+    document.getElementById("statLow").textContent = l;
+    document.getElementById("statMedium").textContent = m;
+    document.getElementById("statHigh").textContent = h;
+  }
+  function charts() {
+    var l = 0,
+      m = 0,
+      h = 0;
+    for (var i = 0; i < data.length; i++) {
+      if (data[i].risk_level === "BAJO") l++;
+      else if (data[i].risk_level === "MEDIO") m++;
+      else if (data[i].risk_level === "ALTO") h++;
+    }
+    var ctx1 = document.getElementById("riskChart").getContext("2d");
+    if (rChart) rChart.destroy();
+    rChart = new Chart(ctx1, {
+      type: "doughnut",
+      data: {
+        labels: ["Bajo", "Medio", "Alto"],
+        datasets: [
+          {
+            data: [l, m, h],
+            backgroundColor: ["#10b981", "#f59e0b", "#ef4444"],
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { position: "bottom" } },
+        cutout: "60%",
+      },
+    });
+    var days = [],
+      counts = [];
+    for (var i = 6; i >= 0; i--) {
+      var d = new Date();
+      d.setDate(d.getDate() - i);
+      days.push(d.toLocaleDateString("es-ES", { weekday: "short" }));
+      var st = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+      var en = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59);
+      var c = 0;
+      for (var j = 0; j < data.length; j++) {
+        var hd = new Date(data[j].timestamp);
+        if (hd >= st && hd <= en) c++;
+      }
+      counts.push(c);
+    }
+    var ctx2 = document.getElementById("timeChart").getContext("2d");
+    if (tChart) tChart.destroy();
+    tChart = new Chart(ctx2, {
+      type: "bar",
+      data: {
+        labels: days,
+        datasets: [
+          { data: counts, backgroundColor: "#6366f1", borderRadius: 4 },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true }, x: { grid: { display: false } } },
+      },
+    });
+  }
+  function filter() {
+    var s = document.getElementById("searchInput").value.toLowerCase();
+    var r = document.getElementById("riskFilter").value;
+    var src = document.getElementById("sourceFilter").value;
+    filtered = [];
+    for (var i = 0; i < data.length; i++) {
+      var it = data[i];
+      var sOk =
+        !s ||
+        (it.client_name && it.client_name.toLowerCase().indexOf(s) !== -1) ||
+        (it.loan_amnt && it.loan_amnt.toString().indexOf(s) !== -1) ||
+        (it.person_income && it.person_income.toString().indexOf(s) !== -1);
+      var rOk = !r || it.risk_level === r;
+      var srcOk = !src || it.source === src;
+      if (sOk && rOk && srcOk) filtered.push(it);
+    }
+    page = 1;
+    render();
+  }
+  function formatCurrency(n) {
+    return "$" + (n || 0).toLocaleString("es-MX");
+  }
+  function getSourceLabel(src) {
+    if (src === "individual")
+      return '<span class="px-2 py-0.5 text-xs rounded-full bg-blue-100 text-blue-700">Individual</span>';
+    if (src === "batch")
+      return '<span class="px-2 py-0.5 text-xs rounded-full bg-purple-100 text-purple-700">Lote</span>';
+    if (src === "preload")
+      return '<span class="px-2 py-0.5 text-xs rounded-full bg-slate-100 text-slate-700">Precargado</span>';
+    return '<span class="px-2 py-0.5 text-xs rounded-full bg-slate-100 text-slate-600">-</span>';
+  }
+  function render() {
+    var tb = document.getElementById("historyTable");
+    var em = document.getElementById("emptyState");
+    var pg = document.getElementById("pagination");
+    if (filtered.length === 0) {
+      tb.innerHTML = "";
+      em.classList.remove("hidden");
+      pg.classList.add("hidden");
+      return;
+    }
+    em.classList.add("hidden");
+    pg.classList.remove("hidden");
+    var st = (page - 1) * perPage;
+    var en = Math.min(st + perPage, filtered.length);
+    var html = "";
+    for (var i = st; i < en; i++) {
+      var it = filtered[i];
+      var d = new Date(it.timestamp);
+      var ds = d.toLocaleDateString("es-ES", {
+        day: "2-digit",
+        month: "short",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+      var rc =
+        it.risk_level === "BAJO"
+          ? "bg-emerald-100 text-emerald-800"
+          : it.risk_level === "MEDIO"
+          ? "bg-amber-100 text-amber-800"
+          : "bg-red-100 text-red-800";
+      var pr = ((it.probability_default || 0) * 100).toFixed(1);
+      var clientName = it.client_name || "Cliente #" + (it.person_age || "-");
+      html +=
+        '<tr class="hover:bg-white/50 transition-colors">' +
+        '<td class="px-4 py-3 text-sm text-slate-600">' +
+        ds +
+        "</td>" +
+        '<td class="px-4 py-3"><div class="text-sm font-medium text-slate-800">' +
+        clientName +
+        "</div></td>" +
+        '<td class="px-4 py-3 text-sm font-medium text-slate-800">' +
+        formatCurrency(it.loan_amnt) +
+        "</td>" +
+        '<td class="px-4 py-3 text-sm text-slate-600">' +
+        formatCurrency(it.person_income) +
+        "</td>" +
+        '<td class="px-4 py-3"><span class="px-2 py-1 text-xs rounded-full ' +
+        rc +
+        '">' +
+        (it.risk_level || "-") +
+        "</span></td>" +
+        '<td class="px-4 py-3 text-sm text-slate-600">' +
+        pr +
+        "%</td>" +
+        '<td class="px-4 py-3">' +
+        getSourceLabel(it.source) +
+        "</td>" +
+        '<td class="px-4 py-3 text-center"><button onclick="del(' +
+        it.id +
+        ')" class="text-red-500 hover:text-red-700 p-1 rounded hover:bg-red-50" title="Eliminar"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></td>' +
+        "</tr>";
+    }
+    tb.innerHTML = html;
+    document.getElementById("showFrom").textContent =
+      filtered.length > 0 ? st + 1 : 0;
+    document.getElementById("showTo").textContent = en;
+    document.getElementById("showTotal").textContent = filtered.length;
+    document.getElementById("btnPrev").disabled = page === 1;
+    document.getElementById("btnNext").disabled = en >= filtered.length;
+  }
+  function changePage(d) {
+    var max = Math.ceil(filtered.length / perPage);
+    page = Math.max(1, Math.min(max, page + d));
+    render();
+  }
+  function del(id) {
+    if (!confirm("Eliminar esta evaluacion?")) return;
+    data = data.filter(function (h) {
+      return h.id !== id;
+    });
+    filtered = filtered.filter(function (h) {
+      return h.id !== id;
+    });
+    save();
+    stats();
+    charts();
+    render();
+  }
+  function clearAllHistory() {
+    if (
+      !confirm("¿Eliminar todo el historial? Esta accion no se puede deshacer.")
+    )
+      return;
+    data = [];
+    filtered = [];
+    save();
+    stats();
+    charts();
+    render();
+  }
+  function exportToCSV() {
+    if (data.length === 0) return;
+    var rows = [["Fecha", "Monto", "Ingreso", "Riesgo", "Prob"].join(",")];
+    for (var i = 0; i < data.length; i++) {
+      var h = data[i];
+      rows.push(
+        [
+          new Date(h.timestamp).toLocaleDateString("es-ES"),
+          h.loan_amnt || "",
+          h.person_income || "",
+          h.risk_level || "",
+          ((h.probability_default || 0) * 100).toFixed(2) + "%",
+        ].join(",")
+      );
+    }
+    var blob = new Blob([rows.join("\n")], { type: "text/csv" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "historial.csv";
+    a.click();
+  }
+</script>
+{% endblock %}

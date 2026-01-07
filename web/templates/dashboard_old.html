@@ -1,0 +1,587 @@
+{% extends "base.html" %} {% block title %}Dashboard - Sistema de Evaluación
+Crediticia{% endblock %} {% block page_title %}
+<span class="flex items-center gap-2">
+  <svg
+    class="h-6 w-6 text-primary-600"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+    ></path>
+  </svg>
+  Dashboard Analítico
+</span>
+{% endblock %} {% block content %}
+<div class="space-y-6">
+  <!-- Métricas Principales -->
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <!-- Total Evaluaciones -->
+    <div
+      class="relative overflow-hidden rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200"
+    >
+      <div class="flex items-center gap-4">
+        <div
+          class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary-100"
+        >
+          <svg
+            class="h-6 w-6 text-primary-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+            ></path>
+          </svg>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-gray-500">Total Evaluaciones</p>
+          <p class="text-2xl font-bold text-gray-900" id="metric-total">
+            {{ metrics.total_evaluations }}
+          </p>
+        </div>
+      </div>
+      <div
+        class="absolute right-0 top-0 h-24 w-24 -translate-y-8 translate-x-8 rounded-full bg-primary-50"
+      ></div>
+    </div>
+
+    <!-- Tasa de Aprobación -->
+    <div
+      class="relative overflow-hidden rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200"
+    >
+      <div class="flex items-center gap-4">
+        <div
+          class="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100"
+        >
+          <svg
+            class="h-6 w-6 text-green-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+            ></path>
+          </svg>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-gray-500">Tasa de Aprobación</p>
+          <p class="text-2xl font-bold text-gray-900" id="metric-approval">
+            {{ metrics.approval_rate }}%
+          </p>
+        </div>
+      </div>
+      <div class="mt-2">
+        <div class="flex items-center gap-2 text-xs">
+          <span
+            class="inline-flex items-center rounded bg-green-100 px-2 py-0.5 text-green-700"
+            >{{ metrics.approved }} Aprobados</span
+          >
+          <span
+            class="inline-flex items-center rounded bg-yellow-100 px-2 py-0.5 text-yellow-700"
+            >{{ metrics.conditional }} Condicionales</span
+          >
+        </div>
+      </div>
+    </div>
+
+    <!-- Score Promedio -->
+    <div
+      class="relative overflow-hidden rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200"
+    >
+      <div class="flex items-center gap-4">
+        <div
+          class="flex h-12 w-12 items-center justify-center rounded-lg bg-yellow-100"
+        >
+          <svg
+            class="h-6 w-6 text-yellow-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
+            ></path>
+          </svg>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-gray-500">Score Promedio</p>
+          <p class="text-2xl font-bold text-gray-900" id="metric-score">
+            {{ metrics.avg_score }}
+          </p>
+        </div>
+      </div>
+      <div class="mt-2">
+        <div class="h-2 w-full rounded-full bg-gray-200">
+          <div
+            class="h-2 rounded-full score-meter"
+            style="width: {{ ((metrics.avg_score - 300) / 550 * 100) | int }}%"
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Monto Total Aprobado -->
+    <div
+      class="relative overflow-hidden rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200"
+    >
+      <div class="flex items-center gap-4">
+        <div
+          class="flex h-12 w-12 items-center justify-center rounded-lg bg-purple-100"
+        >
+          <svg
+            class="h-6 w-6 text-purple-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            ></path>
+          </svg>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-gray-500">Monto Aprobado</p>
+          <p class="text-2xl font-bold text-gray-900" id="metric-amount">
+            ${{ "{:,.0f}".format(metrics.total_amount_approved) }}
+          </p>
+        </div>
+      </div>
+      <p class="mt-2 text-xs text-gray-500">
+        De ${{ "{:,.0f}".format(metrics.total_amount_requested) }} solicitados
+      </p>
+    </div>
+  </div>
+
+  <!-- Gráficos -->
+  <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+    <!-- Distribución de Scores -->
+    <div class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200">
+      <div class="flex items-center justify-between">
+        <h3 class="text-lg font-semibold text-gray-900">
+          Distribución de Scores
+        </h3>
+        <button
+          class="rounded-lg p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+        >
+          <svg
+            class="h-5 w-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+            ></path>
+          </svg>
+        </button>
+      </div>
+      <div class="mt-4 h-64">
+        <canvas id="scoreDistributionChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Decisiones -->
+    <div class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200">
+      <div class="flex items-center justify-between">
+        <h3 class="text-lg font-semibold text-gray-900">
+          Decisiones de Crédito
+        </h3>
+      </div>
+      <div class="mt-4 h-64">
+        <canvas id="decisionChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Métricas del Modelo y Evaluaciones Recientes -->
+  <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+    <!-- Métricas del Modelo ML -->
+    <div class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200">
+      <h3 class="text-lg font-semibold text-gray-900">
+        Rendimiento del Modelo
+      </h3>
+      <p class="text-sm text-gray-500">LightGBM Optimizado con Optuna</p>
+
+      <div class="mt-6 space-y-4">
+        <!-- Accuracy -->
+        <div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-gray-600">Accuracy</span>
+            <span class="font-semibold text-gray-900">93.99%</span>
+          </div>
+          <div class="mt-1 h-2 rounded-full bg-gray-200">
+            <div
+              class="h-2 rounded-full bg-blue-500"
+              style="width: 93.99%"
+            ></div>
+          </div>
+        </div>
+
+        <!-- Precision -->
+        <div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-gray-600">Precision</span>
+            <span class="font-semibold text-gray-900">95.53%</span>
+          </div>
+          <div class="mt-1 h-2 rounded-full bg-gray-200">
+            <div
+              class="h-2 rounded-full bg-green-500"
+              style="width: 95.53%"
+            ></div>
+          </div>
+        </div>
+
+        <!-- Recall -->
+        <div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-gray-600">Recall</span>
+            <span class="font-semibold text-gray-900">75.83%</span>
+          </div>
+          <div class="mt-1 h-2 rounded-full bg-gray-200">
+            <div
+              class="h-2 rounded-full bg-yellow-500"
+              style="width: 75.83%"
+            ></div>
+          </div>
+        </div>
+
+        <!-- F1-Score -->
+        <div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-gray-600">F1-Score</span>
+            <span class="font-semibold text-gray-900">84.55%</span>
+          </div>
+          <div class="mt-1 h-2 rounded-full bg-gray-200">
+            <div
+              class="h-2 rounded-full bg-purple-500"
+              style="width: 84.55%"
+            ></div>
+          </div>
+        </div>
+
+        <!-- ROC-AUC -->
+        <div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-gray-600">ROC-AUC</span>
+            <span class="font-semibold text-gray-900">95.54%</span>
+          </div>
+          <div class="mt-1 h-2 rounded-full bg-gray-200">
+            <div
+              class="h-2 rounded-full bg-indigo-500"
+              style="width: 95.54%"
+            ></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Evaluaciones Recientes -->
+    <div
+      class="lg:col-span-2 rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200"
+    >
+      <div class="flex items-center justify-between">
+        <h3 class="text-lg font-semibold text-gray-900">
+          Evaluaciones Recientes
+        </h3>
+        <a
+          href="{{ url_for('historial') }}"
+          class="text-sm font-medium text-primary-600 hover:text-primary-700"
+        >
+          Ver todas →
+        </a>
+      </div>
+
+      <div class="mt-4 overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr
+              class="border-b border-gray-200 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+            >
+              <th class="pb-3">Cliente</th>
+              <th class="pb-3">Score</th>
+              <th class="pb-3">Monto</th>
+              <th class="pb-3">Decisión</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            {% if recent_evaluations %} {% for eval in recent_evaluations %}
+            <tr class="text-sm">
+              <td class="py-3">
+                <div class="flex items-center gap-3">
+                  <div
+                    class="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center text-xs font-medium text-gray-600"
+                  >
+                    {{ eval.applicant_name[:2] | upper }}
+                  </div>
+                  <div>
+                    <p class="font-medium text-gray-900">
+                      {{ eval.applicant_name }}
+                    </p>
+                    <p class="text-xs text-gray-500">{{ eval.loan_intent }}</p>
+                  </div>
+                </div>
+              </td>
+              <td class="py-3">
+                <span
+                  class="inline-flex items-center gap-1 font-semibold {% if eval.credit_score >= 740 %}text-green-600 {% elif eval.credit_score >= 670 %}text-yellow-600 {% else %}text-red-600{% endif %}"
+                >
+                  {{ eval.credit_score }}
+                </span>
+              </td>
+              <td class="py-3 text-gray-900">
+                ${{ "{:,.0f}".format(eval.loan_amount) }}
+              </td>
+              <td class="py-3">
+                {% if eval.decision == 'APROBADO' %}
+                <span
+                  class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800"
+                >
+                  Aprobado
+                </span>
+                {% elif eval.decision == 'APROBADO CON CONDICIONES' %}
+                <span
+                  class="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800"
+                >
+                  Condicional
+                </span>
+                {% else %}
+                <span
+                  class="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800"
+                >
+                  Rechazado
+                </span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %} {% else %}
+            <tr>
+              <td colspan="4" class="py-8 text-center text-gray-500">
+                <svg
+                  class="mx-auto h-12 w-12 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  ></path>
+                </svg>
+                <p class="mt-2">No hay evaluaciones aún</p>
+                <a
+                  href="{{ url_for('evaluacion') }}"
+                  class="mt-2 inline-flex items-center text-sm font-medium text-primary-600 hover:text-primary-700"
+                >
+                  Realizar primera evaluación →
+                </a>
+              </td>
+            </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Acciones Rápidas -->
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+    <a
+      href="{{ url_for('evaluacion') }}"
+      class="group relative overflow-hidden rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 p-6 text-white shadow-lg transition-all hover:shadow-xl hover:scale-[1.02]"
+    >
+      <div class="relative z-10">
+        <svg
+          class="h-8 w-8"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 4v16m8-8H4"
+          ></path>
+        </svg>
+        <h3 class="mt-4 text-lg font-semibold">Nueva Evaluación</h3>
+        <p class="mt-1 text-sm text-primary-100">
+          Evaluar solicitud individual
+        </p>
+      </div>
+      <div
+        class="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-white/10"
+      ></div>
+    </a>
+
+    <a
+      href="{{ url_for('lote') }}"
+      class="group relative overflow-hidden rounded-xl bg-gradient-to-br from-purple-500 to-purple-700 p-6 text-white shadow-lg transition-all hover:shadow-xl hover:scale-[1.02]"
+    >
+      <div class="relative z-10">
+        <svg
+          class="h-8 w-8"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
+          ></path>
+        </svg>
+        <h3 class="mt-4 text-lg font-semibold">Cargar Lote</h3>
+        <p class="mt-1 text-sm text-purple-100">
+          Procesar múltiples solicitudes
+        </p>
+      </div>
+      <div
+        class="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-white/10"
+      ></div>
+    </a>
+
+    <a
+      href="{{ url_for('historial') }}"
+      class="group relative overflow-hidden rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 p-6 text-white shadow-lg transition-all hover:shadow-xl hover:scale-[1.02]"
+    >
+      <div class="relative z-10">
+        <svg
+          class="h-8 w-8"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+          ></path>
+        </svg>
+        <h3 class="mt-4 text-lg font-semibold">Ver Reportes</h3>
+        <p class="mt-1 text-sm text-emerald-100">Historial y estadísticas</p>
+      </div>
+      <div
+        class="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-white/10"
+      ></div>
+    </a>
+  </div>
+</div>
+{% endblock %} {% block extra_scripts %}
+<script>
+  // Datos para gráficos
+  const scoreDistData = {{ score_distribution | tojson }};
+
+  // Gráfico de distribución de scores
+  const scoreCtx = document.getElementById('scoreDistributionChart').getContext('2d');
+  new Chart(scoreCtx, {
+      type: 'bar',
+      data: {
+          labels: scoreDistData.labels,
+          datasets: [{
+              label: 'Cantidad de Evaluaciones',
+              data: scoreDistData.data,
+              backgroundColor: [
+                  'rgba(239, 68, 68, 0.8)',   // Pobre - Rojo
+                  'rgba(249, 115, 22, 0.8)',  // Regular - Naranja
+                  'rgba(234, 179, 8, 0.8)',   // Bueno - Amarillo
+                  'rgba(132, 204, 22, 0.8)',  // Muy Bueno - Verde claro
+                  'rgba(34, 197, 94, 0.8)'    // Excelente - Verde
+              ],
+              borderRadius: 8,
+              borderSkipped: false
+          }]
+      },
+      options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+              legend: {
+                  display: false
+              }
+          },
+          scales: {
+              y: {
+                  beginAtZero: true,
+                  ticks: {
+                      stepSize: 1
+                  }
+              }
+          }
+      }
+  });
+
+  // Gráfico de decisiones
+  const decisionCtx = document.getElementById('decisionChart').getContext('2d');
+  new Chart(decisionCtx, {
+      type: 'doughnut',
+      data: {
+          labels: ['Aprobados', 'Condicionales', 'Rechazados'],
+          datasets: [{
+              data: [{{ metrics.approved }}, {{ metrics.conditional }}, {{ metrics.rejected }}],
+              backgroundColor: [
+                  'rgba(34, 197, 94, 0.8)',   // Verde
+                  'rgba(234, 179, 8, 0.8)',   // Amarillo
+                  'rgba(239, 68, 68, 0.8)'    // Rojo
+              ],
+              borderWidth: 0,
+              cutout: '60%'
+          }]
+      },
+      options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+              legend: {
+                  position: 'bottom',
+                  labels: {
+                      usePointStyle: true,
+                      padding: 20
+                  }
+              }
+          }
+      }
+  });
+
+  // Auto-refresh cada 30 segundos
+  setInterval(async () => {
+      try {
+          const response = await fetch('/api/dashboard-data');
+          const data = await response.json();
+
+          // Actualizar métricas
+          document.getElementById('metric-total').textContent = data.metrics.total_evaluations;
+          document.getElementById('metric-approval').textContent = data.metrics.approval_rate + '%';
+          document.getElementById('metric-score').textContent = data.metrics.avg_score;
+          document.getElementById('metric-amount').textContent = formatCurrency(data.metrics.total_amount_approved);
+      } catch (e) {
+          console.log('Error actualizando dashboard:', e);
+      }
+  }, 30000);
+</script>
+{% endblock %}

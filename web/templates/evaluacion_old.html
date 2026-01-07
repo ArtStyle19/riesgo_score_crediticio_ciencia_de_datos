@@ -1,0 +1,1605 @@
+{% extends "base.html" %} {% block title %}Evaluación Individual - Sistema de
+Evaluación Crediticia{% endblock %} {% block page_title %}
+<span class="flex items-center gap-2">
+  <svg
+    class="h-6 w-6 text-primary-600"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+    ></path>
+  </svg>
+  Evaluación Individual
+</span>
+{% endblock %} {% block content %}
+<div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+  <!-- Formulario de Evaluación -->
+  <div class="lg:col-span-2">
+    <div class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200">
+      <div class="border-b border-gray-200 pb-4">
+        <h2 class="text-lg font-semibold text-gray-900">
+          Datos del Solicitante
+        </h2>
+        <p class="text-sm text-gray-500">
+          Complete todos los campos para realizar la evaluación crediticia. Los
+          campos con <span class="text-red-500">*</span> son obligatorios.
+        </p>
+      </div>
+
+      <form id="evaluationForm" class="mt-6 space-y-6">
+        <!-- ============================================ -->
+        <!-- SECCIÓN 1: INFORMACIÓN PERSONAL -->
+        <!-- ============================================ -->
+        <div class="rounded-lg border border-gray-200 p-4 bg-gray-50/50">
+          <h3
+            class="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-4"
+          >
+            <svg
+              class="h-5 w-5 text-blue-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+              ></path>
+            </svg>
+            Información Personal del Solicitante
+          </h3>
+
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <!-- Nombre (opcional) -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700">
+                Nombre del Solicitante
+                <span class="text-gray-400 text-xs">(opcional)</span>
+              </label>
+              <input
+                type="text"
+                name="applicant_name"
+                id="applicant_name"
+                class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                placeholder="Ej: Juan Pérez"
+              />
+              <p class="mt-1 text-xs text-gray-400">
+                Solo para identificación interna
+              </p>
+            </div>
+
+            <!-- Edad -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700">
+                Edad del Solicitante <span class="text-red-500">*</span>
+              </label>
+              <div class="relative mt-1">
+                <input
+                  type="number"
+                  name="person_age"
+                  id="person_age"
+                  required
+                  min="18"
+                  max="100"
+                  class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm pr-12"
+                  placeholder="35"
+                />
+                <span
+                  class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 text-sm"
+                  >años</span
+                >
+              </div>
+              <p class="mt-1 text-xs text-gray-500">
+                <span class="inline-flex items-center gap-1">
+                  <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      fill-rule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                      clip-rule="evenodd"
+                    ></path>
+                  </svg>
+                  Debe ser mayor de 18 años
+                </span>
+              </p>
+            </div>
+
+            <!-- Ingreso Anual -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700">
+                Ingreso Anual Bruto <span class="text-red-500">*</span>
+              </label>
+              <div class="relative mt-1">
+                <span
+                  class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500"
+                  >$</span
+                >
+                <input
+                  type="number"
+                  name="person_income"
+                  id="person_income"
+                  required
+                  min="1000"
+                  step="100"
+                  class="block w-full rounded-lg border-gray-300 pl-7 pr-16 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                  placeholder="60000"
+                />
+                <span
+                  class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 text-xs"
+                  >USD/año</span
+                >
+              </div>
+              <p class="mt-1 text-xs text-gray-500">
+                <span class="inline-flex items-center gap-1">
+                  <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      fill-rule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                      clip-rule="evenodd"
+                    ></path>
+                  </svg>
+                  Ingreso total anual antes de impuestos
+                </span>
+              </p>
+            </div>
+
+            <!-- Años de Empleo -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700">
+                Antigüedad Laboral <span class="text-red-500">*</span>
+              </label>
+              <div class="relative mt-1">
+                <input
+                  type="number"
+                  name="person_emp_length"
+                  id="person_emp_length"
+                  required
+                  min="0"
+                  max="60"
+                  step="0.5"
+                  class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm pr-12"
+                  placeholder="5"
+                />
+                <span
+                  class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 text-sm"
+                  >años</span
+                >
+              </div>
+              <p class="mt-1 text-xs text-gray-500">
+                <span class="inline-flex items-center gap-1">
+                  <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      fill-rule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                      clip-rule="evenodd"
+                    ></path>
+                  </svg>
+                  Años en el empleo actual (0 si desempleado)
+                </span>
+              </p>
+            </div>
+
+            <!-- Tipo de Vivienda -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700">
+                Tipo de Vivienda <span class="text-red-500">*</span>
+              </label>
+              <select
+                name="person_home_ownership"
+                id="person_home_ownership"
+                required
+                class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+              >
+                <option value="">Seleccionar...</option>
+                <option value="RENT">🏠 Alquiler - Paga renta mensual</option>
+                <option value="OWN">🏡 Propia - Sin deuda hipotecaria</option>
+                <option value="MORTGAGE">🏦 Hipoteca - Pagando préstamo</option>
+                <option value="OTHER">
+                  📍 Otro - Familiar, prestada, etc.
+                </option>
+              </select>
+              <p class="mt-1 text-xs text-gray-500">
+                Situación actual de vivienda
+              </p>
+            </div>
+
+            <!-- Historial Crediticio -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700">
+                Historial Crediticio <span class="text-red-500">*</span>
+              </label>
+              <div class="relative mt-1">
+                <input
+                  type="number"
+                  name="cb_person_cred_hist_length"
+                  id="cb_person_cred_hist_length"
+                  required
+                  min="0"
+                  max="50"
+                  class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm pr-12"
+                  placeholder="4"
+                />
+                <span
+                  class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 text-sm"
+                  >años</span
+                >
+              </div>
+              <p class="mt-1 text-xs text-gray-500">
+                <span class="inline-flex items-center gap-1">
+                  <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      fill-rule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                      clip-rule="evenodd"
+                    ></path>
+                  </svg>
+                  Años desde su primera cuenta de crédito
+                </span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- SECCIÓN 2: INFORMACIÓN DEL PRÉSTAMO -->
+        <!-- ============================================ -->
+        <div class="rounded-lg border border-gray-200 p-4 bg-blue-50/30">
+          <h3
+            class="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-4"
+          >
+            <svg
+              class="h-5 w-5 text-green-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              ></path>
+            </svg>
+            Información del Préstamo Solicitado
+          </h3>
+
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <!-- Monto del Préstamo -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700">
+                Monto del Préstamo <span class="text-red-500">*</span>
+              </label>
+              <div class="relative mt-1">
+                <span
+                  class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500"
+                  >$</span
+                >
+                <input
+                  type="number"
+                  name="loan_amnt"
+                  id="loan_amnt"
+                  required
+                  min="500"
+                  max="100000"
+                  step="100"
+                  class="block w-full rounded-lg border-gray-300 pl-7 pr-12 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                  placeholder="15000"
+                />
+                <span
+                  class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 text-xs"
+                  >USD</span
+                >
+              </div>
+              <p class="mt-1 text-xs text-gray-500">
+                <span class="inline-flex items-center gap-1">
+                  <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      fill-rule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                      clip-rule="evenodd"
+                    ></path>
+                  </svg>
+                  Cantidad que desea solicitar ($500 - $100,000)
+                </span>
+              </p>
+            </div>
+
+            <!-- Tasa de Interés -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700">
+                Tasa de Interés Anual <span class="text-red-500">*</span>
+              </label>
+              <div class="relative mt-1">
+                <input
+                  type="number"
+                  name="loan_int_rate"
+                  id="loan_int_rate"
+                  required
+                  min="5"
+                  max="30"
+                  step="0.1"
+                  class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm pr-8"
+                  placeholder="11.5"
+                />
+                <span
+                  class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500"
+                  >%</span
+                >
+              </div>
+              <p class="mt-1 text-xs text-gray-500">
+                <span class="inline-flex items-center gap-1">
+                  <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      fill-rule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                      clip-rule="evenodd"
+                    ></path>
+                  </svg>
+                  Tasa propuesta (5% - 30% típico)
+                </span>
+              </p>
+            </div>
+
+            <!-- Proporción Préstamo/Ingreso (CALCULADO AUTOMÁTICAMENTE) -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700">
+                Proporción Préstamo/Ingreso
+                <span class="text-blue-500 text-xs ml-1 font-normal"
+                  >(automático)</span
+                >
+              </label>
+              <div class="relative mt-1">
+                <input
+                  type="text"
+                  name="loan_percent_income"
+                  id="loan_percent_income"
+                  readonly
+                  class="block w-full rounded-lg border-gray-200 bg-gray-100 shadow-sm sm:text-sm cursor-not-allowed"
+                  placeholder="Se calcula automáticamente"
+                />
+              </div>
+              <p class="mt-1 text-xs text-blue-600">
+                <span class="inline-flex items-center gap-1">
+                  <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      fill-rule="evenodd"
+                      d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z"
+                      clip-rule="evenodd"
+                    ></path>
+                  </svg>
+                  = Préstamo ÷ Ingreso Anual
+                </span>
+              </p>
+              <div
+                id="loan_ratio_warning"
+                class="hidden mt-1 p-2 bg-yellow-50 border border-yellow-200 rounded text-xs text-yellow-700"
+              >
+                <span class="font-medium">⚠️ Atención:</span> Un ratio alto
+                indica que el préstamo es grande en relación al ingreso.
+              </div>
+            </div>
+
+            <!-- Propósito del Préstamo -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700">
+                Propósito del Préstamo <span class="text-red-500">*</span>
+              </label>
+              <select
+                name="loan_intent"
+                id="loan_intent"
+                required
+                class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+              >
+                <option value="">Seleccionar...</option>
+                <option value="PERSONAL">💳 Personal - Gastos generales</option>
+                <option value="EDUCATION">
+                  🎓 Educación - Estudios o cursos
+                </option>
+                <option value="MEDICAL">🏥 Médico - Gastos de salud</option>
+                <option value="VENTURE">💼 Negocio - Emprendimiento</option>
+                <option value="HOMEIMPROVEMENT">
+                  🏠 Mejoras del Hogar - Remodelación
+                </option>
+                <option value="DEBTCONSOLIDATION">
+                  📊 Consolidación - Unificar deudas
+                </option>
+              </select>
+              <p class="mt-1 text-xs text-gray-500">
+                ¿Para qué usará el dinero?
+              </p>
+            </div>
+
+            <!-- Grado del Préstamo -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700">
+                Grado de Riesgo Asignado <span class="text-red-500">*</span>
+              </label>
+              <select
+                name="loan_grade"
+                id="loan_grade"
+                required
+                class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+              >
+                <option value="">Seleccionar...</option>
+                <option value="A">A - Excelente (menor riesgo)</option>
+                <option value="B">B - Muy Bueno</option>
+                <option value="C">C - Bueno</option>
+                <option value="D">D - Aceptable</option>
+                <option value="E">E - Regular (mayor riesgo)</option>
+                <option value="F">F - Bajo</option>
+                <option value="G">G - Muy Bajo (máximo riesgo)</option>
+              </select>
+              <p class="mt-1 text-xs text-gray-500">
+                <span class="inline-flex items-center gap-1">
+                  <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      fill-rule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                      clip-rule="evenodd"
+                    ></path>
+                  </svg>
+                  Clasificación preliminar del prestamista
+                </span>
+              </p>
+            </div>
+
+            <!-- Default Previo -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700">
+                ¿Ha incumplido pagos antes? <span class="text-red-500">*</span>
+              </label>
+              <select
+                name="cb_person_default_on_file"
+                id="cb_person_default_on_file"
+                required
+                class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+              >
+                <option value="">Seleccionar...</option>
+                <option value="N">✅ No - Sin incumplimientos previos</option>
+                <option value="Y">❌ Sí - Tiene historial de default</option>
+              </select>
+              <p class="mt-1 text-xs text-gray-500">
+                <span class="inline-flex items-center gap-1">
+                  <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      fill-rule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                      clip-rule="evenodd"
+                    ></path>
+                  </svg>
+                  ¿Aparece en buró de crédito con incumplimientos?
+                </span>
+              </p>
+            </div>
+
+            <!-- Plazo Deseado (nuevo campo) -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700">
+                Plazo Deseado
+                <span class="text-gray-400 text-xs ml-1 font-normal">(opcional)</span>
+              </label>
+              <div class="relative mt-1">
+                <select
+                  name="desired_term_months"
+                  id="desired_term_months"
+                  class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                >
+                  <option value="">Automático según perfil</option>
+                  <option value="12">12 meses (1 año)</option>
+                  <option value="24">24 meses (2 años)</option>
+                  <option value="36">36 meses (3 años)</option>
+                  <option value="48">48 meses (4 años)</option>
+                  <option value="60">60 meses (5 años)</option>
+                </select>
+              </div>
+              <p class="mt-1 text-xs text-gray-500">
+                <span class="inline-flex items-center gap-1">
+                  <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      fill-rule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                      clip-rule="evenodd"
+                    ></path>
+                  </svg>
+                  El sistema ajustará según su score crediticio
+                </span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Resumen de datos (preview) -->
+        <div
+          id="formSummary"
+          class="hidden rounded-lg border border-blue-200 bg-blue-50 p-4"
+        >
+          <h4 class="text-sm font-semibold text-blue-800 mb-2">
+            📋 Resumen de la Solicitud
+          </h4>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+            <div>
+              <span class="text-blue-600">Préstamo:</span>
+              <span id="summaryLoan" class="font-medium text-blue-900">-</span>
+            </div>
+            <div>
+              <span class="text-blue-600">Ingreso:</span>
+              <span id="summaryIncome" class="font-medium text-blue-900"
+                >-</span
+              >
+            </div>
+            <div>
+              <span class="text-blue-600">Ratio:</span>
+              <span id="summaryRatio" class="font-medium text-blue-900">-</span>
+            </div>
+            <div>
+              <span class="text-blue-600">Tasa:</span>
+              <span id="summaryRate" class="font-medium text-blue-900">-</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botones -->
+        <div
+          class="flex items-center justify-between border-t border-gray-200 pt-6"
+        >
+          <p class="text-sm text-gray-500">
+            <span class="text-red-500">*</span> Campos obligatorios
+          </p>
+          <div class="flex gap-3">
+            <button
+              type="button"
+              onclick="resetForm()"
+              class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+            >
+              Limpiar
+            </button>
+            <button
+              type="submit"
+              id="submitBtn"
+              class="inline-flex items-center gap-2 rounded-lg bg-primary-600 px-6 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors"
+            >
+              <svg
+                class="h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                ></path>
+              </svg>
+              Evaluar Solicitud
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Panel de Resultados -->
+  <div class="lg:col-span-1">
+    <div
+      id="resultPanel"
+      class="sticky top-20 rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200"
+    >
+      <!-- Estado inicial -->
+      <div id="resultInitial" class="text-center py-12">
+        <div
+          class="mx-auto h-16 w-16 rounded-full bg-gray-100 flex items-center justify-center"
+        >
+          <svg
+            class="h-8 w-8 text-gray-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+            ></path>
+          </svg>
+        </div>
+        <h3 class="mt-4 text-sm font-semibold text-gray-900">Sin evaluación</h3>
+        <p class="mt-2 text-sm text-gray-500">
+          Complete el formulario y haga clic en "Evaluar Solicitud" para ver los
+          resultados.
+        </p>
+
+        <div class="mt-6 p-4 bg-blue-50 rounded-lg text-left">
+          <h4 class="text-sm font-medium text-blue-800">
+            💡 ¿Qué evalúa este sistema?
+          </h4>
+          <ul class="mt-2 text-xs text-blue-700 space-y-1">
+            <li>
+              • <strong>Score Crediticio</strong>: Puntuación de 300 a 850
+            </li>
+            <li>
+              • <strong>Probabilidad de Default</strong>: Riesgo de impago
+            </li>
+            <li>
+              • <strong>Monto Recomendado</strong>: Cantidad segura a prestar
+            </li>
+            <li>• <strong>Tasa Sugerida</strong>: Interés según el perfil</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Resultado de evaluación -->
+      <div id="resultContent" class="hidden">
+        <!-- Score -->
+        <div class="text-center">
+          <p class="text-sm font-medium text-gray-500">Score Crediticio</p>
+          <div class="mt-2 flex items-center justify-center gap-2">
+            <span id="resultScore" class="text-5xl font-bold"></span>
+            <span id="resultEmoji" class="text-3xl"></span>
+          </div>
+          <span
+            id="resultCategory"
+            class="mt-1 inline-block rounded-full px-3 py-1 text-sm font-medium"
+          ></span>
+        </div>
+
+        <!-- Barra de Score -->
+        <div class="mt-6">
+          <div class="h-4 w-full rounded-full score-meter">
+            <div id="scoreIndicator" class="relative h-full">
+              <div
+                class="absolute top-0 h-4 w-1 bg-gray-800 rounded"
+                style="left: 0%"
+              ></div>
+            </div>
+          </div>
+          <div class="mt-1 flex justify-between text-xs text-gray-500">
+            <span>300</span>
+            <span>580</span>
+            <span>670</span>
+            <span>740</span>
+            <span>850</span>
+          </div>
+          <div class="mt-1 flex justify-between text-xs">
+            <span class="text-red-500">Pobre</span>
+            <span class="text-yellow-500">Regular</span>
+            <span class="text-green-500">Bueno</span>
+            <span class="text-green-600">Muy Bueno</span>
+            <span class="text-green-700">Excelente</span>
+          </div>
+        </div>
+
+        <!-- Decisión -->
+        <div id="resultDecision" class="mt-6 rounded-lg p-4 text-center">
+          <p class="text-sm font-medium">Decisión Final</p>
+          <p id="resultDecisionText" class="text-xl font-bold mt-1"></p>
+        </div>
+
+        <!-- Métricas de Riesgo -->
+        <div class="mt-6 space-y-3">
+          <h4 class="text-sm font-semibold text-gray-700">
+            Análisis de Riesgo
+          </h4>
+          <div
+            class="flex items-center justify-between rounded-lg bg-gray-50 p-3"
+          >
+            <span class="text-sm text-gray-600">Probabilidad de Impago</span>
+            <span id="resultProbDefault" class="text-sm font-semibold"></span>
+          </div>
+          <div
+            class="flex items-center justify-between rounded-lg bg-gray-50 p-3"
+          >
+            <span class="text-sm text-gray-600">Nivel de Riesgo</span>
+            <span id="resultRiskLevel" class="text-sm font-semibold"></span>
+          </div>
+          <div
+            class="flex items-center justify-between rounded-lg bg-gray-50 p-3"
+          >
+            <span class="text-sm text-gray-600">Confianza del Modelo</span>
+            <span id="resultConfidence" class="text-sm font-semibold"></span>
+          </div>
+        </div>
+
+        <!-- Sección cuando APROBADO -->
+        <div id="approvedSection" class="mt-6 border-t border-gray-200 pt-6 hidden">
+          <h4 class="text-sm font-semibold text-green-700">
+            ✅ Préstamo Aprobado
+          </h4>
+          <div class="mt-3 space-y-2">
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-600">Monto Aprobado</span>
+              <span id="resultApprovedAmount" class="font-semibold text-green-600"></span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-600">Tasa de Interés</span>
+              <span id="resultSuggestedRate" class="font-semibold text-gray-900"></span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-600">Plazo</span>
+              <span id="resultMaxTerm" class="font-semibold text-gray-900"></span>
+            </div>
+            <div class="flex justify-between text-sm border-t border-gray-200 pt-2 mt-2">
+              <span class="text-gray-600">Pago Mensual Estimado</span>
+              <span id="resultMonthlyPayment" class="font-semibold text-primary-600"></span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-600">Total a Pagar</span>
+              <span id="resultTotalPayment" class="font-semibold text-gray-700"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sección cuando RECHAZADO -->
+        <div id="rejectedSection" class="mt-6 border-t border-gray-200 pt-6 hidden">
+          <h4 class="text-sm font-semibold text-red-700">
+            ❌ Préstamo No Aprobado
+          </h4>
+          <div class="mt-3 p-4 bg-red-50 rounded-lg border border-red-200">
+            <p class="text-sm text-red-800 font-medium">
+              La solicitud no cumple con los criterios mínimos de aprobación.
+            </p>
+            <div class="mt-3 text-sm text-red-700">
+              <p class="font-medium mb-2">Razones principales:</p>
+              <ul id="rejectionReasons" class="list-disc list-inside space-y-1">
+                <!-- Dinámico -->
+              </ul>
+            </div>
+          </div>
+          
+          <div class="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+            <h5 class="text-sm font-semibold text-blue-800">💡 Para mejorar sus posibilidades:</h5>
+            <ul id="improvementTips" class="mt-2 text-sm text-blue-700 space-y-1">
+              <!-- Dinámico -->
+            </ul>
+          </div>
+        </div>
+
+        <!-- Condiciones (solo para aprobados) -->
+        <div
+          id="conditionsSection"
+          class="mt-6 border-t border-gray-200 pt-6 hidden"
+        >
+          <h4 class="text-sm font-semibold text-gray-700">
+            📋 Condiciones y Observaciones
+          </h4>
+          <ul id="resultConditions" class="mt-3 space-y-2 text-sm"></ul>
+        </div>
+
+        <!-- Explicación del Resultado (NUEVO) -->
+        <div
+          id="explanationSection"
+          class="mt-6 border-t border-gray-200 pt-6"
+        >
+          <h4 class="flex items-center gap-2 text-sm font-semibold text-gray-700">
+            <svg class="h-4 w-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            ¿Por qué este resultado?
+          </h4>
+          <div id="explanationContent" class="mt-3 space-y-2 text-sm">
+            <!-- Dinámicamente generado por JS -->
+          </div>
+          <details class="mt-3 text-xs">
+            <summary class="cursor-pointer text-blue-600 hover:text-blue-700 font-medium">
+              💡 Entender mejor la predicción
+            </summary>
+            <div class="mt-2 p-3 bg-blue-50 rounded-lg text-gray-600 space-y-2">
+              <p><strong>El modelo de Machine Learning</strong> analiza patrones de miles de préstamos históricos para identificar qué combinaciones de factores predicen mejor el riesgo de impago.</p>
+              <p><strong>No es un sistema de reglas fijas</strong> - aprende relaciones complejas entre las variables. Por ejemplo, un "Grade A" no garantiza aprobación si otros factores (como bajo ingreso) indican riesgo.</p>
+              <p><strong>Factores más influyentes:</strong> ingreso anual, ratio préstamo/ingreso, historial de default, años de empleo y propósito del préstamo.</p>
+            </div>
+          </details>
+        </div>
+
+        <!-- Sanity Check Notice (solo si se ajustó) -->
+        <div id="sanityCheckSection" class="mt-4 p-3 bg-purple-50 rounded-lg border border-purple-200 hidden">
+          <div class="flex items-start gap-2">
+            <span class="text-purple-600">🔧</span>
+            <div class="text-sm">
+              <p class="font-medium text-purple-800">Ajuste de Sentido Común Aplicado</p>
+              <p id="sanityCheckReason" class="text-purple-700 mt-1"></p>
+              <p id="sanityCheckOriginal" class="text-xs text-purple-600 mt-1"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botón Nueva Evaluación -->
+        <button
+          onclick="resetForm(); hideResult();"
+          class="mt-6 w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
+        >
+          🔄 Nueva Evaluación
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Ejemplos de Clientes -->
+<div class="mt-8 rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200">
+  <h3 class="text-lg font-semibold text-gray-900">📊 Perfiles de Ejemplo</h3>
+  <p class="text-sm text-gray-500">
+    Haga clic en un perfil para cargar datos de prueba automáticamente
+  </p>
+
+  <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
+    <!-- Cliente Premium -->
+    <button
+      onclick="loadExample('premium')"
+      class="group rounded-lg border-2 border-green-200 bg-green-50 p-4 text-left transition-all hover:border-green-400 hover:shadow-md"
+    >
+      <div class="flex items-center gap-3">
+        <div
+          class="flex h-10 w-10 items-center justify-center rounded-full bg-green-200 text-green-700"
+        >
+          🌟
+        </div>
+        <div>
+          <p class="font-semibold text-gray-900">Cliente Premium</p>
+          <p class="text-xs text-green-600 font-medium">
+            Score esperado: 750-850
+          </p>
+        </div>
+      </div>
+      <div class="mt-3 text-xs text-gray-600 space-y-0.5">
+        <p>• 45 años, $120,000/año</p>
+        <p>• 15 años de empleo, casa propia</p>
+        <p>• Préstamo $25,000 (21% del ingreso)</p>
+        <p>• Sin historial de incumplimiento</p>
+      </div>
+    </button>
+
+    <!-- Cliente Regular -->
+    <button
+      onclick="loadExample('regular')"
+      class="group rounded-lg border-2 border-yellow-200 bg-yellow-50 p-4 text-left transition-all hover:border-yellow-400 hover:shadow-md"
+    >
+      <div class="flex items-center gap-3">
+        <div
+          class="flex h-10 w-10 items-center justify-center rounded-full bg-yellow-200 text-yellow-700"
+        >
+          👤
+        </div>
+        <div>
+          <p class="font-semibold text-gray-900">Cliente Regular</p>
+          <p class="text-xs text-yellow-600 font-medium">
+            Score esperado: 620-700
+          </p>
+        </div>
+      </div>
+      <div class="mt-3 text-xs text-gray-600 space-y-0.5">
+        <p>• 32 años, $55,000/año</p>
+        <p>• 4 años de empleo, alquiler</p>
+        <p>• Préstamo $15,000 (27% del ingreso)</p>
+        <p>• Sin historial de incumplimiento</p>
+      </div>
+    </button>
+
+    <!-- Cliente Riesgoso -->
+    <button
+      onclick="loadExample('risky')"
+      class="group rounded-lg border-2 border-red-200 bg-red-50 p-4 text-left transition-all hover:border-red-400 hover:shadow-md"
+    >
+      <div class="flex items-center gap-3">
+        <div
+          class="flex h-10 w-10 items-center justify-center rounded-full bg-red-200 text-red-700"
+        >
+          ⚠️
+        </div>
+        <div>
+          <p class="font-semibold text-gray-900">Cliente Riesgoso</p>
+          <p class="text-xs text-red-600 font-medium">
+            Score esperado: 350-500
+          </p>
+        </div>
+      </div>
+      <div class="mt-3 text-xs text-gray-600 space-y-0.5">
+        <p>• 23 años, $28,000/año</p>
+        <p>• 1 año de empleo, alquiler</p>
+        <p>• Préstamo $20,000 (71% del ingreso)</p>
+        <p>• CON historial de incumplimiento</p>
+      </div>
+    </button>
+  </div>
+</div>
+
+<!-- Guía de Interpretación -->
+<div
+  class="mt-6 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 p-6 ring-1 ring-blue-200"
+>
+  <h3 class="text-lg font-semibold text-gray-900">📖 Guía de Interpretación</h3>
+
+  <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- Interpretación del Score -->
+    <div>
+      <h4 class="text-sm font-semibold text-gray-700 mb-2">
+        Score Crediticio (300-850)
+      </h4>
+      <div class="space-y-1 text-sm">
+        <div class="flex items-center gap-2">
+          <span class="w-3 h-3 rounded-full bg-green-600"></span>
+          <span
+            ><strong>800-850 Excelente:</strong> Mejor tasa, máximo monto</span
+          >
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="w-3 h-3 rounded-full bg-green-500"></span>
+          <span
+            ><strong>740-799 Muy Bueno:</strong> Muy buenas condiciones</span
+          >
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
+          <span><strong>670-739 Bueno:</strong> Aprobado estándar</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="w-3 h-3 rounded-full bg-orange-500"></span>
+          <span
+            ><strong>580-669 Regular:</strong> Aprobado con condiciones</span
+          >
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="w-3 h-3 rounded-full bg-red-500"></span>
+          <span><strong>300-579 Pobre:</strong> Alto riesgo de rechazo</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Qué significa la proporción -->
+    <div>
+      <h4 class="text-sm font-semibold text-gray-700 mb-2">
+        Proporción Préstamo/Ingreso
+      </h4>
+      <p class="text-sm text-gray-600 mb-2">
+        Esta métrica indica qué porcentaje de tu ingreso anual representa el
+        préstamo solicitado.
+      </p>
+      <div class="space-y-1 text-sm">
+        <div class="flex items-center gap-2">
+          <span class="px-2 py-0.5 rounded bg-green-100 text-green-700 text-xs"
+            >0.10 = 10%</span
+          >
+          <span>Muy conservador</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span
+            class="px-2 py-0.5 rounded bg-yellow-100 text-yellow-700 text-xs"
+            >0.25 = 25%</span
+          >
+          <span>Razonable</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span
+            class="px-2 py-0.5 rounded bg-orange-100 text-orange-700 text-xs"
+            >0.40 = 40%</span
+          >
+          <span>Elevado</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="px-2 py-0.5 rounded bg-red-100 text-red-700 text-xs"
+            >&gt;0.50 = &gt;50%</span
+          >
+          <span>Alto riesgo</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %} {% block extra_scripts %}
+<script>
+  // Ejemplos de clientes con datos realistas
+  const examples = {
+    premium: {
+      applicant_name: "Carlos Mendoza",
+      person_age: 45,
+      person_income: 120000,
+      person_home_ownership: "OWN",
+      person_emp_length: 15,
+      loan_intent: "HOMEIMPROVEMENT",
+      loan_grade: "A",
+      loan_amnt: 25000,
+      loan_int_rate: 7.5,
+      cb_person_default_on_file: "N",
+      cb_person_cred_hist_length: 12,
+    },
+    regular: {
+      applicant_name: "María García",
+      person_age: 32,
+      person_income: 55000,
+      person_home_ownership: "RENT",
+      person_emp_length: 4,
+      loan_intent: "PERSONAL",
+      loan_grade: "C",
+      loan_amnt: 15000,
+      loan_int_rate: 13.5,
+      cb_person_default_on_file: "N",
+      cb_person_cred_hist_length: 5,
+    },
+    risky: {
+      applicant_name: "Roberto Sánchez",
+      person_age: 23,
+      person_income: 28000,
+      person_home_ownership: "RENT",
+      person_emp_length: 1,
+      loan_intent: "VENTURE",
+      loan_grade: "E",
+      loan_amnt: 20000,
+      loan_int_rate: 18.5,
+      cb_person_default_on_file: "Y",
+      cb_person_cred_hist_length: 2,
+    },
+  };
+
+  // Cargar ejemplo
+  function loadExample(type) {
+    const data = examples[type];
+    for (const [key, value] of Object.entries(data)) {
+      const input = document.getElementById(key);
+      if (input) {
+        input.value = value;
+      }
+    }
+    // Recalcular la proporción después de cargar
+    calculateLoanPercent();
+    updateFormSummary();
+    showToast(
+      `Perfil "${type}" cargado. Haga clic en "Evaluar Solicitud".`,
+      "info"
+    );
+  }
+
+  // Resetear formulario
+  function resetForm() {
+    document.getElementById("evaluationForm").reset();
+    document.getElementById("formSummary").classList.add("hidden");
+    document.getElementById("loan_ratio_warning").classList.add("hidden");
+    document.getElementById("loan_percent_income").value = "";
+  }
+
+  // Ocultar resultado
+  function hideResult() {
+    document.getElementById("resultInitial").classList.remove("hidden");
+    document.getElementById("resultContent").classList.add("hidden");
+  }
+
+  // Calcular proporción préstamo/ingreso
+  function calculateLoanPercent() {
+    const loanAmnt =
+      parseFloat(document.getElementById("loan_amnt").value) || 0;
+    const income =
+      parseFloat(document.getElementById("person_income").value) || 0;
+
+    if (income > 0 && loanAmnt > 0) {
+      const percent = loanAmnt / income;
+      // Mostrar como porcentaje para el usuario, pero guardar el ratio real
+      document.getElementById("loan_percent_income").value =
+        (percent * 100).toFixed(1) + "% (ratio: " + percent.toFixed(2) + ")";
+      document.getElementById("loan_percent_income").dataset.rawValue =
+        percent.toFixed(4);
+
+      // Mostrar advertencia si el ratio es alto
+      const warning = document.getElementById("loan_ratio_warning");
+      if (percent > 0.4) {
+        warning.classList.remove("hidden");
+        warning.innerHTML = `<span class="font-medium">⚠️ Ratio alto (${(
+          percent * 100
+        ).toFixed(
+          0
+        )}%):</span> El préstamo representa más del 40% de tu ingreso anual. Esto puede afectar negativamente la evaluación.`;
+      } else {
+        warning.classList.add("hidden");
+      }
+
+      updateFormSummary();
+    } else {
+      document.getElementById("loan_percent_income").value = "";
+      document.getElementById("loan_percent_income").dataset.rawValue = "";
+    }
+  }
+
+  // Actualizar resumen del formulario
+  function updateFormSummary() {
+    const loan = document.getElementById("loan_amnt").value;
+    const income = document.getElementById("person_income").value;
+    const rate = document.getElementById("loan_int_rate").value;
+
+    if (loan && income) {
+      document.getElementById("formSummary").classList.remove("hidden");
+      document.getElementById("summaryLoan").textContent = formatCurrency(
+        parseFloat(loan)
+      );
+      document.getElementById("summaryIncome").textContent = formatCurrency(
+        parseFloat(income)
+      );
+
+      const ratio = parseFloat(loan) / parseFloat(income);
+      document.getElementById("summaryRatio").textContent =
+        (ratio * 100).toFixed(0) + "%";
+      document.getElementById("summaryRate").textContent = rate
+        ? rate + "%"
+        : "-";
+    }
+  }
+
+  // Mostrar resultado
+  function showResult(data) {
+    document.getElementById("resultInitial").classList.add("hidden");
+    document.getElementById("resultContent").classList.remove("hidden");
+
+    const evaluation = data.evaluation;
+    const score = evaluation.credit_score;
+    const risk = evaluation.risk_assessment;
+    const loan = evaluation.loan_recommendation;
+    const decision = evaluation.final_decision;
+
+    // Score
+    document.getElementById("resultScore").textContent = score.score;
+    document.getElementById("resultEmoji").textContent = score.emoji;
+    document.getElementById("resultCategory").textContent = score.category;
+    document.getElementById("resultCategory").style.backgroundColor =
+      score.color + "20";
+    document.getElementById("resultCategory").style.color = score.color;
+
+    // Indicador de score en la barra
+    const scorePercent = ((score.score - 300) / 550) * 100;
+    document.querySelector("#scoreIndicator div").style.left =
+      Math.min(100, Math.max(0, scorePercent)) + "%";
+
+    // Decisión
+    const decisionEl = document.getElementById("resultDecision");
+    document.getElementById("resultDecisionText").textContent =
+      decision.decision;
+
+    if (decision.decision === "APROBADO") {
+      decisionEl.className =
+        "mt-6 rounded-lg p-4 text-center bg-green-100 text-green-800 border border-green-200";
+    } else if (decision.decision === "APROBADO CON CONDICIONES") {
+      decisionEl.className =
+        "mt-6 rounded-lg p-4 text-center bg-yellow-100 text-yellow-800 border border-yellow-200";
+    } else {
+      decisionEl.className =
+        "mt-6 rounded-lg p-4 text-center bg-red-100 text-red-800 border border-red-200";
+    }
+
+    // Métricas de riesgo con colores
+    const probDefault = risk.probability_default * 100;
+    const probEl = document.getElementById("resultProbDefault");
+    probEl.textContent = probDefault.toFixed(1) + "%";
+    probEl.className =
+      "text-sm font-semibold " +
+      (probDefault > 50
+        ? "text-red-600"
+        : probDefault > 30
+        ? "text-yellow-600"
+        : "text-green-600");
+
+    const riskEl = document.getElementById("resultRiskLevel");
+    riskEl.textContent = risk.risk_level;
+    riskEl.className =
+      "text-sm font-semibold " +
+      (risk.risk_level === "ALTO" ? "text-red-600" : "text-green-600");
+
+    document.getElementById("resultConfidence").textContent =
+      (risk.confidence * 100).toFixed(1) + "%";
+
+    // Mostrar sección apropiada según decisión
+    const isRejected = decision.decision === "RECHAZADO";
+    const approvedSection = document.getElementById("approvedSection");
+    const rejectedSection = document.getElementById("rejectedSection");
+    const conditionsSection = document.getElementById("conditionsSection");
+    
+    if (isRejected) {
+      // Mostrar sección de RECHAZADO
+      approvedSection.classList.add("hidden");
+      rejectedSection.classList.remove("hidden");
+      conditionsSection.classList.add("hidden");
+      
+      // Generar razones de rechazo
+      generateRejectionReasons(data.input, evaluation);
+      
+    } else {
+      // Mostrar sección de APROBADO
+      approvedSection.classList.remove("hidden");
+      rejectedSection.classList.add("hidden");
+      
+      // Llenar datos de préstamo aprobado
+      document.getElementById("resultApprovedAmount").textContent = 
+        formatCurrency(loan.approved_amount);
+      document.getElementById("resultSuggestedRate").textContent =
+        loan.suggested_rate.toFixed(2) + "%";
+      document.getElementById("resultMaxTerm").textContent =
+        loan.max_term_months + " meses";
+      document.getElementById("resultMonthlyPayment").textContent =
+        formatCurrency(loan.monthly_payment);
+      document.getElementById("resultTotalPayment").textContent =
+        formatCurrency(loan.monthly_payment * loan.max_term_months);
+      
+      // Mostrar condiciones si hay
+      const conditionsList = document.getElementById("resultConditions");
+      conditionsList.innerHTML = "";
+      
+      if (loan.conditions && loan.conditions.length > 0) {
+        conditionsSection.classList.remove("hidden");
+        loan.conditions.forEach((condition) => {
+          const li = document.createElement("li");
+          li.className = "flex items-start gap-2 text-gray-600 p-2 bg-gray-50 rounded";
+          li.innerHTML = `<span>${condition}</span>`;
+          conditionsList.appendChild(li);
+        });
+      } else {
+        conditionsSection.classList.add("hidden");
+      }
+    }
+
+    // Mostrar Sanity Check si se aplicó
+    const sanityCheckSection = document.getElementById("sanityCheckSection");
+    if (evaluation.sanity_check && evaluation.sanity_check.was_adjusted) {
+      sanityCheckSection.classList.remove("hidden");
+      document.getElementById("sanityCheckReason").textContent = 
+        evaluation.sanity_check.reason;
+      document.getElementById("sanityCheckOriginal").textContent = 
+        `El modelo ML originalmente predijo ${(evaluation.sanity_check.original_prob_default * 100).toFixed(0)}% de riesgo, 
+        ajustado a ${(evaluation.risk_assessment.probability_default * 100).toFixed(1)}% por reglas de sentido común.`;
+    } else {
+      sanityCheckSection.classList.add("hidden");
+    }
+
+    // Generar explicación del resultado
+    generateExplanation(data, evaluation);
+  }
+
+  // Función para generar razones de rechazo y tips de mejora
+  function generateRejectionReasons(input, evaluation) {
+    const reasonsList = document.getElementById("rejectionReasons");
+    const tipsList = document.getElementById("improvementTips");
+    reasonsList.innerHTML = "";
+    tipsList.innerHTML = "";
+    
+    const reasons = [];
+    const tips = [];
+    const probDefault = evaluation.risk_assessment.probability_default * 100;
+    const score = evaluation.credit_score.score;
+    
+    // Analizar factores negativos
+    if (probDefault > 70) {
+      reasons.push(`Probabilidad de impago muy alta (${probDefault.toFixed(0)}%)`);
+    } else if (probDefault > 50) {
+      reasons.push(`Probabilidad de impago elevada (${probDefault.toFixed(0)}%)`);
+    }
+    
+    if (score < 580) {
+      reasons.push(`Score crediticio bajo (${score} de 850)`);
+      tips.push("Mejorar historial crediticio pagando deudas existentes a tiempo");
+    }
+    
+    if (input.cb_person_default_on_file === "Y") {
+      reasons.push("Historial de incumplimiento previo en buró de crédito");
+      tips.push("Esperar a que el historial negativo expire (usualmente 5-7 años)");
+    }
+    
+    if (input.person_income < 30000) {
+      reasons.push(`Ingreso anual bajo ($${input.person_income.toLocaleString()})`);
+      tips.push("Aumentar ingresos demostrables o agregar co-deudor");
+    }
+    
+    if (input.person_emp_length < 2) {
+      reasons.push(`Antigüedad laboral corta (${input.person_emp_length} años)`);
+      tips.push("Esperar a tener al menos 2 años en el empleo actual");
+    }
+    
+    const ratio = input.loan_percent_income || (input.loan_amnt / input.person_income);
+    if (ratio > 0.4) {
+      reasons.push(`Préstamo muy alto respecto al ingreso (${(ratio*100).toFixed(0)}%)`);
+      tips.push("Solicitar un monto menor o aumentar ingresos");
+    }
+    
+    if (input.loan_grade === "E" || input.loan_grade === "F" || input.loan_grade === "G") {
+      reasons.push(`Grado de riesgo asignado muy bajo (${input.loan_grade})`);
+    }
+    
+    if (input.person_age > 70) {
+      reasons.push(`Edad avanzada (${input.person_age} años) representa mayor riesgo`);
+    }
+    
+    if (input.loan_intent === "VENTURE") {
+      tips.push("Considerar otros propósitos de préstamo con menor riesgo (personal, educación)");
+    }
+    
+    // Si no hay razones específicas, agregar genérica
+    if (reasons.length === 0) {
+      reasons.push("La combinación de factores indica alto riesgo de impago");
+    }
+    
+    // Si no hay tips, agregar genéricos
+    if (tips.length === 0) {
+      tips.push("Reducir el monto solicitado");
+      tips.push("Mejorar el historial crediticio antes de volver a aplicar");
+    }
+    
+    // Renderizar razones
+    reasons.forEach(reason => {
+      const li = document.createElement("li");
+      li.textContent = reason;
+      reasonsList.appendChild(li);
+    });
+    
+    // Renderizar tips
+    tips.forEach(tip => {
+      const li = document.createElement("li");
+      li.innerHTML = `• ${tip}`;
+      tipsList.appendChild(li);
+    });
+  }
+
+  // Nueva función para generar explicación
+  function generateExplanation(data, evaluation) {
+    const explanationEl = document.getElementById("explanationContent");
+    explanationEl.innerHTML = "";
+    
+    const factors = [];
+    const input = data.input || {};
+    const risk = evaluation.risk_assessment;
+    const score = evaluation.credit_score.score;
+    const probDefault = risk.probability_default * 100;
+    
+    // Analizar ingreso
+    const income = input.person_income || 0;
+    if (income < 30000) {
+      factors.push({
+        icon: "❌",
+        text: `Ingreso anual muy bajo ($${income.toLocaleString()}/año)`,
+        impact: "negativo",
+        detail: "El modelo considera $30,000+/año como mínimo seguro para préstamos"
+      });
+    } else if (income < 50000) {
+      factors.push({
+        icon: "⚠️",
+        text: `Ingreso anual moderado ($${income.toLocaleString()}/año)`,
+        impact: "neutro",
+        detail: "Ingresos en el rango típico del dataset"
+      });
+    } else {
+      factors.push({
+        icon: "✅",
+        text: `Ingreso anual sólido ($${income.toLocaleString()}/año)`,
+        impact: "positivo",
+        detail: "Ingresos superiores al promedio del dataset"
+      });
+    }
+    
+    // Analizar ratio préstamo/ingreso
+    const ratio = (input.loan_percent_income || 0);
+    if (ratio > 0.4) {
+      factors.push({
+        icon: "❌",
+        text: `Ratio préstamo/ingreso muy alto (${(ratio*100).toFixed(0)}%)`,
+        impact: "negativo",
+        detail: "El préstamo representa más del 40% del ingreso anual"
+      });
+    } else if (ratio > 0.25) {
+      factors.push({
+        icon: "⚠️",
+        text: `Ratio préstamo/ingreso elevado (${(ratio*100).toFixed(0)}%)`,
+        impact: "neutro",
+        detail: "El préstamo está entre el 25-40% del ingreso"
+      });
+    } else if (ratio > 0) {
+      factors.push({
+        icon: "✅",
+        text: `Ratio préstamo/ingreso saludable (${(ratio*100).toFixed(0)}%)`,
+        impact: "positivo",
+        detail: "El préstamo es menor al 25% del ingreso"
+      });
+    }
+    
+    // Analizar historial de default
+    if (input.cb_person_default_on_file === "Y") {
+      factors.push({
+        icon: "❌",
+        text: "Historial de incumplimiento previo",
+        impact: "negativo",
+        detail: "Existe registro de default en buró de crédito"
+      });
+    } else {
+      factors.push({
+        icon: "✅",
+        text: "Sin historial de incumplimiento",
+        impact: "positivo",
+        detail: "Historial crediticio limpio"
+      });
+    }
+    
+    // Analizar empleo
+    const empLength = input.person_emp_length || 0;
+    if (empLength < 2) {
+      factors.push({
+        icon: "⚠️",
+        text: `Antigüedad laboral corta (${empLength} años)`,
+        impact: "neutro",
+        detail: "Menos de 2 años en el empleo actual"
+      });
+    } else if (empLength >= 5) {
+      factors.push({
+        icon: "✅",
+        text: `Antigüedad laboral estable (${empLength} años)`,
+        impact: "positivo",
+        detail: "Más de 5 años de estabilidad laboral"
+      });
+    }
+    
+    // Analizar propósito del préstamo
+    const riskyPurposes = ["VENTURE", "DEBTCONSOLIDATION"];
+    if (riskyPurposes.includes(input.loan_intent)) {
+      factors.push({
+        icon: "⚠️",
+        text: `Propósito de alto riesgo (${input.loan_intent})`,
+        impact: "neutro",
+        detail: "Los préstamos para negocio o consolidación tienen mayor tasa de impago históricamente"
+      });
+    }
+    
+    // Analizar edad con ingreso
+    const age = input.person_age || 0;
+    if (age > 55 && income < 50000) {
+      factors.push({
+        icon: "⚠️",
+        text: `Combinación de edad (${age}) e ingreso bajo`,
+        impact: "neutro",
+        detail: "El modelo detecta mayor riesgo en personas cercanas a jubilación con ingresos limitados"
+      });
+    }
+    
+    // Render factores
+    factors.forEach(factor => {
+      const div = document.createElement("div");
+      div.className = `flex items-start gap-2 p-2 rounded ${
+        factor.impact === "negativo" ? "bg-red-50" : 
+        factor.impact === "positivo" ? "bg-green-50" : "bg-yellow-50"
+      }`;
+      div.innerHTML = `
+        <span class="text-lg">${factor.icon}</span>
+        <div>
+          <p class="font-medium ${
+            factor.impact === "negativo" ? "text-red-700" : 
+            factor.impact === "positivo" ? "text-green-700" : "text-yellow-700"
+          }">${factor.text}</p>
+          <p class="text-xs text-gray-500">${factor.detail}</p>
+        </div>
+      `;
+      explanationEl.appendChild(div);
+    });
+    
+    // Mensaje resumen
+    const summaryDiv = document.createElement("div");
+    summaryDiv.className = "mt-3 p-3 bg-gray-100 rounded-lg";
+    summaryDiv.innerHTML = `
+      <p class="text-xs text-gray-600">
+        <strong>Resumen:</strong> El modelo ML analizó ${factors.length} factores principales. 
+        La probabilidad de impago del <strong>${probDefault.toFixed(1)}%</strong> 
+        ${probDefault > 50 ? "indica alto riesgo basado en patrones del dataset de entrenamiento" : 
+          probDefault > 30 ? "está en un rango moderado de riesgo" : 
+          "indica bajo riesgo de impago"}.
+      </p>
+    `;
+    explanationEl.appendChild(summaryDiv);
+  }
+
+  // Event listeners para cálculo automático
+  document
+    .getElementById("loan_amnt")
+    .addEventListener("input", calculateLoanPercent);
+  document
+    .getElementById("person_income")
+    .addEventListener("input", calculateLoanPercent);
+  document
+    .getElementById("loan_int_rate")
+    .addEventListener("input", updateFormSummary);
+
+  // Manejar envío del formulario
+  document
+    .getElementById("evaluationForm")
+    .addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const submitBtn = document.getElementById("submitBtn");
+      const originalText = submitBtn.innerHTML;
+
+      // Validación adicional antes de enviar
+      const loanAmnt = parseFloat(document.getElementById("loan_amnt").value);
+      const income = parseFloat(document.getElementById("person_income").value);
+
+      if (!loanAmnt || loanAmnt <= 0) {
+        showToast("Por favor ingrese un monto de préstamo válido", "error");
+        return;
+      }
+
+      if (!income || income <= 0) {
+        showToast("Por favor ingrese un ingreso válido", "error");
+        return;
+      }
+
+      showLoading(submitBtn);
+
+      try {
+        const formData = new FormData(this);
+        const data = {};
+
+        // Campos numéricos
+        const numericFields = [
+          "person_age",
+          "person_income",
+          "person_emp_length",
+          "loan_amnt",
+          "loan_int_rate",
+          "cb_person_cred_hist_length",
+          "desired_term_months",
+        ];
+
+        formData.forEach((value, key) => {
+          if (key === "loan_percent_income") {
+            // Ignorar - lo calcularemos después
+            return;
+          }
+          if (numericFields.includes(key)) {
+            if (value && value !== "") {
+              data[key] = parseFloat(value);
+            }
+          } else {
+            data[key] = value;
+          }
+        });
+
+        // IMPORTANTE: Calcular loan_percent_income correctamente
+        // El modelo espera un ratio (0.25 = 25%), no un porcentaje
+        data.loan_percent_income = data.loan_amnt / data.person_income;
+
+        console.log("Datos enviados:", data); // Para debugging
+
+        const response = await fetch("/api/evaluar", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+          showResult(result);
+          showToast("✅ Evaluación completada exitosamente", "success");
+
+          // Scroll al resultado en móvil
+          if (window.innerWidth < 1024) {
+            document
+              .getElementById("resultPanel")
+              .scrollIntoView({ behavior: "smooth" });
+          }
+        } else {
+          console.error("Error del servidor:", result);
+          showToast(result.error || "Error al procesar la evaluación", "error");
+          if (result.details) {
+            result.details.forEach((detail) => showToast(detail, "error"));
+          }
+        }
+      } catch (error) {
+        console.error("Error de conexión:", error);
+        showToast("Error de conexión con el servidor", "error");
+      } finally {
+        hideLoading(submitBtn, originalText);
+      }
+    });
+
+  // Calcular al cargar la página si hay valores
+  window.addEventListener("load", function () {
+    calculateLoanPercent();
+  });
+</script>
+{% endblock %}
