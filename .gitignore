@@ -51,9 +51,9 @@ build/
 # =====================
 # Archivos de datos
 # =====================
-*.csv
-*.xlsx
-*.json
+# *.csv
+# *.xlsx
+# *.json
 
 # =====================
 # Imágenes / resultados
