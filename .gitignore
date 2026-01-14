@@ -58,10 +58,10 @@ build/
 # =====================
 # Imágenes / resultados
 # =====================
-*.png
-*.jpg
-*.jpeg
-*.svg
+# *.png
+# *.jpg
+# *.jpeg
+# *.svg
 
 # =====================
 # Mapas / OSM / GIS
