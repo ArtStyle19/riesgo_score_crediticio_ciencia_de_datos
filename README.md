@@ -1,37 +1,63 @@
-# 🏦 Sistema de Evaluación Crediticia - Aplicación Web
+# 🏦 Sistema de Evaluación Crediticia – Aplicación Web con Machine Learning
 
-Sistema web profesional para evaluación de riesgo crediticio con Machine Learning.
+Sistema web profesional para la **evaluación de riesgo crediticio** utilizando modelos de _Machine Learning_, con interfaz interactiva y soporte para evaluaciones individuales y por lote.
 
-## 🚀 Características
+---
 
-### Dashboard Analítico
+## 👤 Autor
 
-- Métricas en tiempo real
-- Gráficos interactivos con Chart.js
-- Distribución de scores y decisiones
-- Historial de evaluaciones recientes
+- **Nombre:** Jorge Guillermo Olarte Quispe
+- **Universidad:** Universidad Nacional del Altiplano
 
-### Evaluación Individual
+## 🚀 Funcionalidades Principales
 
-- Formulario completo con validación en tiempo real
-- Resultado visual con score crediticio (300-850)
+### 📊 Dashboard y Métricas
+
+| Dashboard                                 | Métricas                                |
+| ----------------------------------------- | --------------------------------------- |
+| ![Dashboard](readme-images/Dashboard.png) | ![Metricas](readme-images/metricas.png) |
+
+---
+
+### 👤 Evaluación Individual de Riesgo
+
+| Bajo Riesgo                                                  | Alto Riesgo                                                  |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| ![Bajo Riesgo](readme-images/Evaluacion%20Bajo%20Riesgo.png) | ![Alto Riesgo](readme-images/Evaluacion%20Alto%20Riesgo.png) |
+
+- Score crediticio (300 – 850)
 - Probabilidad de default
-- Recomendaciones de préstamo personalizadas
-- Ejemplos de perfiles para pruebas
+- Recomendaciones automáticas
 
-### Evaluación por Lote
+---
 
-- Drag & drop para archivos CSV
-- Procesamiento batch de múltiples solicitudes
-- Métricas agregadas
-- Descarga de resultados en CSV
-- Reporte de errores
+### 🧮 Modal de Resultado
 
-### Sistema de Score Crediticio
+| Riesgo Bajo                                           | Riesgo Alto                                           |
+| ----------------------------------------------------- | ----------------------------------------------------- |
+| ![Modal Bajo](readme-images/riego%20bajo%20modal.png) | ![Modal Alto](readme-images/riego%20alto%20modal.png) |
 
-- Rango 300-850 (similar a FICO)
-- 5 categorías: Pobre, Regular, Bueno, Muy Bueno, Excelente
-- Factores considerados: historial, empleo, ratio deuda/ingreso
+---
+
+### 📂 Evaluación por Lote (Batch Processing)
+
+| Carga y Evaluación                                                |
+| ----------------------------------------------------------------- |
+| ![Evaluación por Lote](readme-images/evaluacion%20por%20lote.png) |
+
+- Procesamiento masivo desde CSV
+- Descarga de resultados
+- Manejo de errores
+
+---
+
+### 🕒 Historial de Evaluaciones
+
+| Historial                                 |
+| ----------------------------------------- |
+| ![Historial](readme-images/historial.png) |
+
+---
 
 ## 📋 Requisitos
 
