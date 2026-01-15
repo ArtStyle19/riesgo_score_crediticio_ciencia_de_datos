@@ -8,6 +8,7 @@ Sistema web profesional para la **evaluación de riesgo crediticio** utilizando 
 
 - **Nombre:** Jorge Guillermo Olarte Quispe
 - **Universidad:** Universidad Nacional del Altiplano
+- **Ingenieria de Sistemas**
 
 ## 🚀 Funcionalidades Principales
 
